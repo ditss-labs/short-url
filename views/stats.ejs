@@ -8,216 +8,481 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .bg-gradient-sidebar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --accent: #10b981;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f1f5f9;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        
+        .stat-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .hover-glow:hover {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+        
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-ring-circle {
+            stroke-dasharray: 283;
+            stroke-dashoffset: 283;
+            transition: stroke-dashoffset 1s ease-out;
+            stroke-linecap: round;
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .truncate-multiline {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .floating {
+            animation: floating 6s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <div class="flex">
-        <div class="bg-gradient-sidebar text-white w-64 min-h-screen p-6 hidden md:block">
+<body class="min-h-screen">
+    <div class="flex flex-col lg:flex-row">
+        <div class="glass lg:w-64 p-6 lg:min-h-screen lg:sticky lg:top-0">
             <div class="mb-10">
-                <h2 class="text-2xl font-bold flex items-center">
-                    <i class="fas fa-link mr-3"></i> ASUMA Link
-                </h2>
-                <p class="text-sm text-purple-200 mt-2">Advanced URL Analytics</p>
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="gradient-bg w-12 h-12 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-chart-network text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold">ASUMA Analytics</h2>
+                        <p class="text-gray-400 text-sm">Real-time Tracking</p>
+                    </div>
+                </div>
+                
+                <nav class="space-y-1">
+                    <a href="/dashboard" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition group">
+                        <div class="w-8 h-8 flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg group-hover:from-purple-500 group-hover:to-indigo-600">
+                            <i class="fas fa-tachometer-alt text-sm"></i>
+                        </div>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="/" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition group">
+                        <div class="w-8 h-8 flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg group-hover:from-blue-500 group-hover:to-cyan-600">
+                            <i class="fas fa-plus text-sm"></i>
+                        </div>
+                        <span>Create New</span>
+                    </a>
+                    <a href="<%= APP_DOMAIN %>/<%= url.shortId %>" target="_blank" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition group">
+                        <div class="w-8 h-8 flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg group-hover:from-emerald-500 group-hover:to-green-600">
+                            <i class="fas fa-external-link-alt text-sm"></i>
+                        </div>
+                        <span>Visit Link</span>
+                    </a>
+                    <a href="<%= APP_DOMAIN %>/<%= url.shortId %>/qr" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition group">
+                        <div class="w-8 h-8 flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg group-hover:from-amber-500 group-hover:to-orange-600">
+                            <i class="fas fa-qrcode text-sm"></i>
+                        </div>
+                        <span>QR Code</span>
+                    </a>
+                </nav>
             </div>
             
-            <nav class="space-y-2">
-                <a href="/dashboard" class="flex items-center p-3 rounded-lg hover:bg-white/10 transition">
-                    <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
-                </a>
-                <a href="/" class="flex items-center p-3 rounded-lg hover:bg-white/10 transition">
-                    <i class="fas fa-plus mr-3"></i> Create New
-                </a>
-                <a href="<%= APP_DOMAIN %>/<%= url.shortId %>" target="_blank" class="flex items-center p-3 rounded-lg hover:bg-white/10 transition">
-                    <i class="fas fa-external-link-alt mr-3"></i> Visit Link
-                </a>
-                <a href="<%= APP_DOMAIN %>/<%= url.shortId %>/qr" class="flex items-center p-3 rounded-lg hover:bg-white/10 transition">
-                    <i class="fas fa-qrcode mr-3"></i> QR Code
-                </a>
-            </nav>
+            <div class="mt-8 pt-6 border-t border-gray-800">
+                <div class="p-3 rounded-xl bg-gradient-to-r from-gray-800/50 to-gray-900/50">
+                    <p class="text-sm text-gray-400 mb-1">Short Code</p>
+                    <p class="font-mono font-bold text-lg"><%= url.shortId %></p>
+                    <div class="flex items-center gap-2 mt-3">
+                        <div class="flex-1 h-1 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full"></div>
+                        <div class="text-xs text-gray-400">
+                            <i class="fas fa-chart-line mr-1"></i>
+                            <%= url.clicks %> clicks
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="flex-1 p-6">
-            <div class="mb-8">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-800">
-                            <i class="fas fa-chart-line mr-3"></i> Analytics: 
-                            <span class="text-purple-600"><%= url.shortId %></span>
-                        </h1>
-                        <div class="flex flex-wrap items-center gap-2 mt-2">
+        <div class="flex-1 p-4 lg:p-8">
+            <div class="mb-8 fade-in">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-6">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="gradient-bg p-3 rounded-2xl shadow-xl floating">
+                                <i class="fas fa-chart-line text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h1 class="text-3xl font-bold gradient-text">Advanced Analytics</h1>
+                                <p class="text-gray-400">Real-time tracking for <span class="font-mono text-white"><%= url.shortId %></span></p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-2">
                             <a href="<%= APP_DOMAIN %>/<%= url.shortId %>" target="_blank" 
-                               class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm hover:bg-purple-200 transition">
-                                <i class="fas fa-external-link-alt mr-1"></i><%= APP_DOMAIN %>/<%= url.shortId %>
+                               class="px-4 py-2 glass rounded-xl text-sm hover-glow transition flex items-center gap-2">
+                                <i class="fas fa-external-link-alt text-purple-400"></i>
+                                <%= APP_DOMAIN %>/<span class="font-bold"><%= url.shortId %></span>
                             </a>
-                            <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">
-                                <i class="fas fa-calendar-alt mr-1"></i> Created <%= new Date(url.createdAt).toLocaleDateString() %>
-                            </span>
+                            <div class="px-4 py-2 glass rounded-xl text-sm flex items-center gap-2">
+                                <i class="fas fa-calendar-alt text-gray-400"></i>
+                                Created <%= new Date(url.createdAt).toLocaleDateString('en-US', { 
+                                    weekday: 'long',
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric'
+                                }) %>
+                            </div>
                             <% if (url.requiresPassword) { %>
-                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                                <i class="fas fa-lock mr-1"></i> Password Protected
-                            </span>
+                            <div class="px-4 py-2 bg-gradient-to-r from-emerald-500/20 to-green-500/20 border border-emerald-500/30 rounded-xl text-sm flex items-center gap-2">
+                                <i class="fas fa-lock text-emerald-400"></i>
+                                Password Protected
+                            </div>
                             <% } %>
                             <% if (url.maxClicks) { %>
-                            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">
-                                <i class="fas fa-tachometer-alt mr-1"></i> Max <%= url.maxClicks %> clicks
-                            </span>
+                            <div class="px-4 py-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 rounded-xl text-sm flex items-center gap-2">
+                                <i class="fas fa-tachometer-alt text-amber-400"></i>
+                                Max <%= url.maxClicks %> clicks
+                            </div>
                             <% } %>
                         </div>
                     </div>
-                    <div class="flex flex-wrap gap-2">
-                        <a href="/dashboard" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition flex items-center">
-                            <i class="fas fa-arrow-left mr-2"></i> Back
+                    
+                    <div class="flex flex-wrap gap-3">
+                        <a href="/dashboard" class="px-5 py-3 glass rounded-xl hover:bg-white/10 transition flex items-center gap-2">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Dashboard</span>
                         </a>
-                        <a href="/" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition flex items-center">
-                            <i class="fas fa-plus mr-2"></i> New Link
+                        <a href="/" class="px-5 py-3 gradient-bg text-white rounded-xl shadow-lg hover-glow transition flex items-center gap-2">
+                            <i class="fas fa-plus"></i>
+                            <span>New Link</span>
                         </a>
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <div class="flex items-center">
-                        <div class="p-3 bg-purple-100 rounded-lg mr-4">
-                            <i class="fas fa-mouse-pointer text-purple-600 text-2xl"></i>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 fade-in" style="animation-delay: 0.1s;">
+                <div class="glass stat-card p-6 rounded-2xl">
+                    <div class="flex items-start justify-between mb-6">
+                        <div class="p-3 bg-gradient-to-br from-purple-500/20 to-indigo-500/20 rounded-xl">
+                            <i class="fas fa-mouse-pointer text-2xl text-purple-400"></i>
                         </div>
-                        <div>
-                            <p class="text-gray-600">Total Clicks</p>
-                            <p class="text-3xl font-bold text-gray-800"><%= url.clicks %></p>
+                        <div class="text-right">
+                            <div class="text-3xl font-bold"><%= url.clicks %></div>
+                            <div class="text-sm text-purple-400 font-medium pulse">Live</div>
                         </div>
+                    </div>
+                    <h3 class="text-gray-300 font-semibold mb-1">Total Clicks</h3>
+                    <p class="text-gray-500 text-sm">All-time engagements</p>
+                    <div class="mt-4 w-full bg-gray-800 rounded-full h-1">
+                        <div class="bg-gradient-to-r from-purple-500 to-indigo-500 h-1 rounded-full" 
+                             style="width: <%= Math.min(100, (url.clicks / Math.max(url.maxClicks || 100, 100)) * 100) %>%"></div>
                     </div>
                 </div>
                 
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <div class="flex items-center">
-                        <div class="p-3 bg-blue-100 rounded-lg mr-4">
-                            <i class="fas fa-globe text-blue-600 text-2xl"></i>
+                <div class="glass stat-card p-6 rounded-2xl">
+                    <div class="flex items-start justify-between mb-6">
+                        <div class="p-3 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl">
+                            <i class="fas fa-globe-americas text-2xl text-blue-400"></i>
                         </div>
-                        <div>
-                            <p class="text-gray-600">Countries</p>
-                            <p class="text-3xl font-bold text-gray-800"><%= countries.length %></p>
+                        <div class="text-right">
+                            <div class="text-3xl font-bold"><%= countries.length %></div>
+                            <div class="text-sm text-blue-400 font-medium">Countries</div>
                         </div>
+                    </div>
+                    <h3 class="text-gray-300 font-semibold mb-1">Geographic Reach</h3>
+                    <p class="text-gray-500 text-sm">Global coverage</p>
+                    <div class="mt-4 flex items-center">
+                        <% const topCountries = countries.slice(0, 3); %>
+                        <% topCountries.forEach(country => { %>
+                        <div class="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-xs font-bold -ml-2 first:ml-0"
+                             title="<%= country._id %>">
+                            <%= country.code ? country.code.substring(0,2) : '??' %>
+                        </div>
+                        <% }); %>
+                        <% if (countries.length > 3) { %>
+                        <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-xs text-gray-400 -ml-2">
+                            +<%= countries.length - 3 %>
+                        </div>
+                        <% } %>
                     </div>
                 </div>
                 
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <div class="flex items-center">
-                        <div class="p-3 bg-green-100 rounded-lg mr-4">
-                            <i class="fas fa-mobile-alt text-green-600 text-2xl"></i>
+                <div class="glass stat-card p-6 rounded-2xl">
+                    <div class="flex items-start justify-between mb-6">
+                        <div class="p-3 bg-gradient-to-br from-emerald-500/20 to-green-500/20 rounded-xl">
+                            <i class="fas fa-mobile-alt text-2xl text-emerald-400"></i>
                         </div>
-                        <div>
-                            <p class="text-gray-600">Mobile</p>
+                        <div class="text-right">
                             <%
                                 const mobile = devices.find(d => d._id === 'Mobile')?.count || 0;
                                 const totalDevices = devices.reduce((sum, d) => sum + d.count, 0);
                                 const mobilePercent = totalDevices > 0 ? Math.round((mobile / totalDevices) * 100) : 0;
                             %>
-                            <p class="text-3xl font-bold text-gray-800"><%= mobilePercent %>%</p>
+                            <div class="text-3xl font-bold"><%= mobilePercent %>%</div>
+                            <div class="text-sm text-emerald-400 font-medium">Mobile</div>
                         </div>
+                    </div>
+                    <h3 class="text-gray-300 font-semibold mb-1">Mobile Traffic</h3>
+                    <p class="text-gray-500 text-sm">Mobile vs Desktop</p>
+                    <div class="mt-4 flex items-center text-xs text-gray-400">
+                        <span>Desktop <%= 100 - mobilePercent %>%</span>
+                        <div class="flex-1 mx-2 h-1 bg-gray-700 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-emerald-500 to-green-500" 
+                                 style="width: <%= mobilePercent %>%"></div>
+                        </div>
+                        <span>Mobile <%= mobilePercent %>%</span>
                     </div>
                 </div>
                 
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <div class="flex items-center">
-                        <div class="p-3 bg-yellow-100 rounded-lg mr-4">
-                            <i class="fas fa-calendar text-yellow-600 text-2xl"></i>
+                <div class="glass stat-card p-6 rounded-2xl">
+                    <div class="flex items-start justify-between mb-6">
+                        <div class="p-3 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-xl">
+                            <i class="fas fa-calendar-clock text-2xl text-amber-400"></i>
                         </div>
-                        <div>
-                            <p class="text-gray-600">Expires</p>
-                            <p class="text-lg font-bold text-gray-800">
+                        <div class="text-right">
+                            <div class="text-xl font-bold">
                                 <% if (url.expiresAt) { %>
                                     <%= new Date(url.expiresAt).toLocaleDateString() %>
                                 <% } else { %>
                                     Never
                                 <% } %>
-                            </p>
+                            </div>
+                            <div class="text-sm text-amber-400 font-medium">Expiration</div>
                         </div>
+                    </div>
+                    <h3 class="text-gray-300 font-semibold mb-1">Link Lifetime</h3>
+                    <p class="text-gray-500 text-sm">Validity period</p>
+                    <div class="mt-4">
+                        <% if (url.expiresAt) { %>
+                        <div class="text-sm text-gray-400">
+                            <i class="fas fa-hourglass-half mr-2"></i>
+                            <% const daysLeft = Math.ceil((new Date(url.expiresAt) - new Date()) / (1000 * 60 * 60 * 24)); %>
+                            <% if (daysLeft > 0) { %>
+                                <%= daysLeft %> days remaining
+                            <% } else { %>
+                                Expired
+                            <% } %>
+                        </div>
+                        <% } else { %>
+                        <div class="text-sm text-gray-400">
+                            <i class="fas fa-infinity mr-2"></i>
+                            Permanent link
+                        </div>
+                        <% } %>
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">
-                        <i class="fas fa-chart-bar mr-2"></i> Daily Clicks (Last 30 Days)
-                    </h2>
-                    <canvas id="dailyChart" height="250"></canvas>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 fade-in" style="animation-delay: 0.2s;">
+                <div class="glass p-6 rounded-2xl">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold flex items-center gap-2">
+                            <i class="fas fa-chart-bar text-purple-400"></i>
+                            Daily Performance (30 Days)
+                        </h2>
+                        <div class="text-sm text-gray-400">
+                            <i class="fas fa-calendar-alt mr-1"></i>
+                            Last 30 days
+                        </div>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="dailyChart"></canvas>
+                    </div>
                 </div>
                 
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">
-                        <i class="fas fa-clock mr-2"></i> Last 24 Hours
-                    </h2>
-                    <canvas id="hourlyChart" height="250"></canvas>
+                <div class="glass p-6 rounded-2xl">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold flex items-center gap-2">
+                            <i class="fas fa-clock text-emerald-400"></i>
+                            Hourly Activity (24 Hours)
+                        </h2>
+                        <div class="text-sm text-gray-400">
+                            <i class="fas fa-history mr-1"></i>
+                            Last 24 hours
+                        </div>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="hourlyChart"></canvas>
+                    </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">
-                        <i class="fas fa-globe-americas mr-2"></i> Top Countries
-                    </h2>
-                    <div class="space-y-4">
-                        <% countries.forEach(country => { 
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 fade-in" style="animation-delay: 0.3s;">
+                <div class="glass p-6 rounded-2xl">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold flex items-center gap-2">
+                            <i class="fas fa-globe text-blue-400"></i>
+                            Geographic Distribution
+                        </h2>
+                        <div class="text-sm text-blue-400">
+                            <%= countries.length %> countries
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4 max-h-96 overflow-y-auto scrollbar-hide pr-2">
+                        <% countries.forEach((country, index) => { 
                             const percent = Math.round((country.count / url.clicks) * 100);
                         %>
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-gray-700">
-                                    <span class="font-medium"><%= country._id %></span>
-                                    <% if (country.code) { %>
-                                    <span class="text-xs text-gray-500">(<%= country.code %>)</span>
-                                    <% } %>
-                                </span>
-                                <span class="text-gray-600"><%= country.count %> (<%= percent %>%)</span>
+                        <div class="group">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
+                                        <% if (country.code) { %>
+                                        <span class="text-lg font-bold"><%= country.code %></span>
+                                        <% } else { %>
+                                        <i class="fas fa-globe text-blue-400"></i>
+                                        <% } %>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium"><%= country._id %></div>
+                                        <div class="text-xs text-gray-400"><%= country.count %> clicks</div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold"><%= percent %>%</div>
+                                    <div class="text-xs text-gray-400">Share</div>
+                                </div>
                             </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-purple-600 h-2 rounded-full" style="width: <%= percent %>%"></div>
+                            <div class="w-full bg-gray-800 rounded-full h-2 group-hover:h-3 transition-all duration-300">
+                                <div class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full rounded-full transition-all duration-500" 
+                                     style="width: <%= percent %>%"></div>
                             </div>
                         </div>
                         <% }); %>
+                        
                         <% if (countries.length === 0) { %>
-                        <p class="text-gray-500 text-center py-8">No country data available</p>
+                        <div class="text-center py-12">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center">
+                                <i class="fas fa-globe text-2xl text-gray-600"></i>
+                            </div>
+                            <p class="text-gray-400">No geographic data available yet</p>
+                        </div>
                         <% } %>
                     </div>
                 </div>
                 
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">
-                        <i class="fas fa-desktop mr-2"></i> Devices & Browsers
+                <div class="glass p-6 rounded-2xl">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <i class="fas fa-laptop-code text-purple-400"></i>
+                        Device & Browser Insights
                     </h2>
+                    
                     <div class="space-y-6">
                         <div>
-                            <h3 class="font-medium text-gray-700 mb-2">Devices</h3>
-                            <div class="space-y-2">
+                            <h3 class="font-semibold text-gray-300 mb-4 flex items-center gap-2">
+                                <i class="fas fa-mobile-alt text-sm"></i>
+                                Device Distribution
+                            </h3>
+                            <div class="grid grid-cols-3 gap-4">
                                 <% devices.forEach(device => { 
                                     const percent = Math.round((device.count / url.clicks) * 100);
+                                    const colors = {
+                                        'Mobile': 'from-blue-500 to-cyan-500',
+                                        'Desktop': 'from-purple-500 to-indigo-500',
+                                        'Tablet': 'from-emerald-500 to-green-500'
+                                    };
                                 %>
-                                <div class="flex items-center">
-                                    <div class="w-24 text-gray-600"><%= device._id %></div>
-                                    <div class="flex-1 ml-2">
-                                        <div class="flex justify-between mb-1">
-                                            <span class="text-sm"><%= device.count %> clicks</span>
-                                            <span class="text-sm"><%= percent %>%</span>
-                                        </div>
-                                        <div class="w-full bg-gray-200 rounded-full h-2">
-                                            <div class="bg-blue-500 h-2 rounded-full" style="width: <%= percent %>%"></div>
+                                <div class="text-center">
+                                    <div class="relative mx-auto mb-2">
+                                        <svg class="w-20 h-20 transform -rotate-90">
+                                            <circle cx="40" cy="40" r="32" stroke="#1e293b" stroke-width="6" fill="none"/>
+                                            <circle cx="40" cy="40" r="32" stroke-linecap="round" 
+                                                    class="stroke-current <%= colors[device._id] || 'from-gray-500 to-gray-600' %>"
+                                                    stroke-width="6" fill="none"
+                                                    stroke-dasharray="<%= 2 * Math.PI * 32 %>"
+                                                    stroke-dashoffset="<%= 2 * Math.PI * 32 * (1 - percent / 100) %>"/>
+                                        </svg>
+                                        <div class="absolute inset-0 flex items-center justify-center">
+                                            <div class="text-center">
+                                                <div class="text-xl font-bold"><%= percent %>%</div>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="font-medium"><%= device._id %></div>
+                                    <div class="text-sm text-gray-400"><%= device.count %> clicks</div>
                                 </div>
                                 <% }); %>
                             </div>
                         </div>
+                        
                         <div>
-                            <h3 class="font-medium text-gray-700 mb-2">Browsers</h3>
+                            <h3 class="font-semibold text-gray-300 mb-4 flex items-center gap-2">
+                                <i class="fas fa-window-restore text-sm"></i>
+                                Top Browsers
+                            </h3>
                             <div class="flex flex-wrap gap-2">
-                                <% browsers.forEach(browser => { %>
-                                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">
-                                    <%= browser._id %> (<%= browser.count %>)
-                                </span>
+                                <% browsers.slice(0, 6).forEach(browser => { %>
+                                <div class="px-3 py-2 bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl flex items-center gap-2">
+                                    <i class="<%= 
+                                        browser._id.includes('Chrome') ? 'fab fa-chrome text-red-400' :
+                                        browser._id.includes('Firefox') ? 'fab fa-firefox text-orange-400' :
+                                        browser._id.includes('Safari') ? 'fab fa-safari text-blue-400' :
+                                        browser._id.includes('Edge') ? 'fab fa-edge text-blue-300' :
+                                        'fas fa-globe text-gray-400'
+                                    %>"></i>
+                                    <span class="text-sm"><%= browser._id %></span>
+                                    <span class="text-xs px-1.5 py-0.5 bg-gray-700 rounded"><%= browser.count %></span>
+                                </div>
                                 <% }); %>
                             </div>
                         </div>
@@ -225,76 +490,121 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <h2 class="text-xl font-semibold text-gray-800">
-                        <i class="fas fa-list mr-2"></i> Recent Clicks
+            <div class="glass rounded-2xl overflow-hidden mb-8 fade-in" style="animation-delay: 0.4s;">
+                <div class="px-6 py-4 border-b border-gray-800 bg-gradient-to-r from-gray-900/50 to-gray-800/50">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <i class="fas fa-list-ul text-amber-400"></i>
+                        Recent Activity Timeline
                     </h2>
                 </div>
+                
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Device</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Browser/OS</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Referrer</th>
+                    <table class="w-full">
+                        <thead>
+                            <tr class="text-left text-gray-400 border-b border-gray-800">
+                                <th class="px-6 py-4 font-medium">Time & Date</th>
+                                <th class="px-6 py-4 font-medium">Location</th>
+                                <th class="px-6 py-4 font-medium">Device</th>
+                                <th class="px-6 py-4 font-medium">Platform</th>
+                                <th class="px-6 py-4 font-medium">Source</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200">
+                        <tbody class="divide-y divide-gray-800">
                             <% analytics.forEach(log => { %>
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900"><%= new Date(log.timestamp).toLocaleDateString() %></div>
-                                    <div class="text-xs text-gray-500"><%= new Date(log.timestamp).toLocaleTimeString() %></div>
+                            <tr class="hover:bg-white/5 transition group">
+                                <td class="px-6 py-4">
+                                    <div class="font-medium"><%= new Date(log.timestamp).toLocaleTimeString() %></div>
+                                    <div class="text-sm text-gray-400"><%= new Date(log.timestamp).toLocaleDateString() %></div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <i class="fas fa-map-marker-alt text-red-400 mr-2"></i>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
+                                            <i class="fas fa-map-marker-alt text-blue-400"></i>
+                                        </div>
                                         <div>
                                             <div class="font-medium"><%= log.country %></div>
-                                            <div class="text-sm text-gray-500"><%= log.city || 'Unknown' %></div>
+                                            <div class="text-sm text-gray-400"><%= log.city || 'Unknown city' %></div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-3 py-1 text-xs rounded-full 
-                                        <%= log.device === 'Mobile' ? 'bg-blue-100 text-blue-800' : 
-                                           log.device === 'Tablet' ? 'bg-purple-100 text-purple-800' : 
-                                           'bg-gray-100 text-gray-800' %>">
-                                        <i class="fas <%= log.device === 'Mobile' ? 'fa-mobile-alt' : 
-                                                      log.device === 'Tablet' ? 'fa-tablet-alt' : 
-                                                      'fa-desktop' %> mr-1"></i>
-                                        <%= log.device %>
-                                    </span>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-lg <%= 
+                                            log.device === 'Mobile' ? 'bg-gradient-to-br from-blue-500/20 to-cyan-500/20' :
+                                            log.device === 'Tablet' ? 'bg-gradient-to-br from-emerald-500/20 to-green-500/20' :
+                                            'bg-gradient-to-br from-purple-500/20 to-indigo-500/20'
+                                        %> flex items-center justify-center">
+                                            <i class="<%= 
+                                                log.device === 'Mobile' ? 'fas fa-mobile-alt text-blue-400' :
+                                                log.device === 'Tablet' ? 'fas fa-tablet-alt text-emerald-400' :
+                                                'fas fa-desktop text-purple-400'
+                                            %>"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium"><%= log.device %></div>
+                                            <div class="text-sm text-gray-400"><%= log.os %></div>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="text-sm text-gray-900"><%= log.browser %></div>
-                                    <div class="text-xs text-gray-500"><%= log.os %></div>
+                                    <div class="flex items-center gap-2">
+                                        <i class="<%= 
+                                            log.browser.includes('Chrome') ? 'fab fa-chrome text-red-400' :
+                                            log.browser.includes('Firefox') ? 'fab fa-firefox text-orange-400' :
+                                            log.browser.includes('Safari') ? 'fab fa-safari text-blue-400' :
+                                            'fas fa-globe text-gray-400'
+                                        %> text-lg"></i>
+                                        <div class="truncate-multiline max-w-[150px]">
+                                            <%= log.browser %>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="max-w-xs truncate text-sm text-gray-600" title="<%= log.referrer %>">
+                                <td class="px-6 py-4">
+                                    <div class="max-w-[200px] truncate-multiline text-gray-400 group-hover:text-white transition-colors"
+                                         title="<%= log.referrer %>">
                                         <% if (log.referrer === 'Direct') { %>
-                                        <span class="text-gray-400">Direct</span>
+                                        <div class="flex items-center gap-2 text-gray-400">
+                                            <i class="fas fa-directions text-gray-500"></i>
+                                            Direct Traffic
+                                        </div>
+                                        <% } else if (log.referrer) { %>
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-external-link-alt text-gray-500"></i>
+                                            <%= log.referrer.replace('https://', '').replace('http://', '').split('/')[0] %>
+                                        </div>
                                         <% } else { %>
-                                        <%= log.referrer %>
+                                        <div class="text-gray-500">
+                                            <i class="fas fa-question-circle mr-1"></i>
+                                            Unknown
+                                        </div>
                                         <% } %>
                                     </div>
                                 </td>
                             </tr>
                             <% }); %>
+                            
                             <% if (analytics.length === 0) { %>
                             <tr>
-                                <td colspan="5" class="px-6 py-12 text-center text-gray-500">
-                                    <i class="fas fa-inbox text-4xl mb-4 block"></i>
-                                    <p class="text-lg">No clicks recorded yet</p>
+                                <td colspan="5" class="px-6 py-16 text-center">
+                                    <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-inbox text-2xl text-gray-600"></i>
+                                    </div>
+                                    <p class="text-xl text-gray-400 mb-2">No activity recorded yet</p>
+                                    <p class="text-gray-500">The first click will appear here</p>
                                 </td>
                             </tr>
                             <% } %>
                         </tbody>
                     </table>
                 </div>
+                
+                <% if (analytics.length > 0) { %>
+                <div class="px-6 py-4 border-t border-gray-800 text-center">
+                    <div class="text-sm text-gray-400">
+                        Showing latest <span class="font-bold text-white"><%= analytics.length %></span> clicks
+                    </div>
+                </div>
+                <% } %>
             </div>
         </div>
     </div>
@@ -303,7 +613,10 @@
         const dailyCtx = document.getElementById('dailyChart').getContext('2d');
         const dailyData = <%= JSON.stringify(dailyClicks) %>;
         
-        const dailyLabels = dailyData.map(d => d.date);
+        const dailyLabels = dailyData.map(d => {
+            const date = new Date(d.date);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        });
         const dailyValues = dailyData.map(d => d.count);
         
         new Chart(dailyCtx, {
@@ -311,7 +624,7 @@
             data: {
                 labels: dailyLabels,
                 datasets: [{
-                    label: 'Clicks per Day',
+                    label: 'Clicks',
                     data: dailyValues,
                     borderColor: '#8b5cf6',
                     backgroundColor: 'rgba(139, 92, 246, 0.1)',
@@ -321,22 +634,43 @@
                     pointBackgroundColor: '#8b5cf6',
                     pointBorderColor: '#ffffff',
                     pointBorderWidth: 2,
-                    pointRadius: 4
+                    pointRadius: 4,
+                    pointHoverRadius: 6
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false }
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleColor: '#f1f5f9',
+                        bodyColor: '#cbd5e1',
+                        borderColor: '#4f46e5',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        padding: 12
+                    }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        ticks: { stepSize: 1 },
-                        grid: { color: 'rgba(0,0,0,0.05)' }
+                        grid: { 
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: { 
+                            color: '#94a3b8',
+                            stepSize: Math.ceil(Math.max(...dailyValues) / 5)
+                        }
                     },
                     x: {
-                        grid: { display: false }
+                        grid: { 
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: { color: '#94a3b8' }
                     }
                 }
             }
@@ -358,28 +692,83 @@
                 datasets: [{
                     label: 'Clicks per Hour',
                     data: hourlyValues,
-                    backgroundColor: '#10b981',
-                    borderColor: '#059669',
+                    backgroundColor: (context) => {
+                        const value = context.raw;
+                        const max = Math.max(...hourlyValues);
+                        const alpha = 0.2 + (value / max) * 0.8;
+                        return `rgba(16, 185, 129, ${alpha})`;
+                    },
+                    borderColor: '#10b981',
                     borderWidth: 1,
-                    borderRadius: 4
+                    borderRadius: 6
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false }
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleColor: '#f1f5f9',
+                        bodyColor: '#cbd5e1',
+                        borderColor: '#10b981',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        padding: 12
+                    }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        ticks: { stepSize: 1 },
-                        grid: { color: 'rgba(0,0,0,0.05)' }
+                        grid: { 
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: { 
+                            color: '#94a3b8',
+                            stepSize: Math.ceil(Math.max(...hourlyValues) / 5)
+                        }
                     },
                     x: {
-                        grid: { display: false }
+                        grid: { 
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: { 
+                            color: '#94a3b8',
+                            maxRotation: 45
+                        }
                     }
                 }
             }
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+            
+            const today = new Date().toLocaleDateString();
+            const todayClicks = dailyData.find(d => d.date === today)?.count || 0;
+            
+            if (todayClicks > 0) {
+                const liveIndicator = document.querySelector('.pulse');
+                setInterval(() => {
+                    liveIndicator.style.opacity = liveIndicator.style.opacity === '0.5' ? '1' : '0.5';
+                }, 1000);
+            }
+            
+            const tableRows = document.querySelectorAll('tbody tr');
+            tableRows.forEach((row, index) => {
+                row.style.animationDelay = `${0.5 + (index * 0.05)}s`;
+            });
         });
     </script>
 </body>
