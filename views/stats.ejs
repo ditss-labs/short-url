@@ -3,321 +3,307 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics - <%= url.shortId %></title>
+    <title>Analytics - <%= url.shortId %> | ASUMA Link</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .bg-gradient-sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen p-4">
-    <div class="max-w-7xl mx-auto">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-800">
-                    <i class="fas fa-chart-line mr-3"></i>Analytics: <span class="text-purple-600"><%= url.shortId %></span>
-                </h1>
-                <div class="flex flex-wrap gap-2 mt-2">
-                    <a href="<%= APP_DOMAIN %>/<%= url.shortId %>" target="_blank" 
-                       class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm hover:bg-purple-200 transition">
-                        <i class="fas fa-external-link-alt mr-1"></i><%= APP_DOMAIN %>/<%= url.shortId %>
-                    </a>
-                    <a href="<%= APP_DOMAIN %>/<%= url.shortId %>/qr" 
-                       class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm hover:bg-blue-200 transition">
-                        <i class="fas fa-qrcode mr-1"></i>QR Code
-                    </a>
-                    <% if (url.requiresPassword) { %>
-                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                        <i class="fas fa-lock mr-1"></i>Password Protected
-                    </span>
-                    <% } %>
-                    <% if (url.maxClicks) { %>
-                    <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">
-                        <i class="fas fa-tachometer-alt mr-1"></i>Max <%= url.maxClicks %> clicks
-                    </span>
-                    <% } %>
-                </div>
+<body class="bg-gray-100 min-h-screen">
+    <div class="flex">
+        <div class="bg-gradient-sidebar text-white w-64 min-h-screen p-6 hidden md:block">
+            <div class="mb-10">
+                <h2 class="text-2xl font-bold flex items-center">
+                    <i class="fas fa-link mr-3"></i> ASUMA Link
+                </h2>
+                <p class="text-sm text-purple-200 mt-2">Advanced URL Analytics</p>
             </div>
-            <div class="flex flex-wrap gap-2">
-                <a href="/dashboard" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition flex items-center">
-                    <i class="fas fa-arrow-left mr-2"></i>Back
+            
+            <nav class="space-y-2">
+                <a href="/dashboard" class="flex items-center p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
                 </a>
-                <a href="/" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition flex items-center">
-                    <i class="fas fa-plus mr-2"></i>New
+                <a href="/" class="flex items-center p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-plus mr-3"></i> Create New
                 </a>
-            </div>
+                <a href="<%= APP_DOMAIN %>/<%= url.shortId %>" target="_blank" class="flex items-center p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-external-link-alt mr-3"></i> Visit Link
+                </a>
+                <a href="<%= APP_DOMAIN %>/<%= url.shortId %>/qr" class="flex items-center p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-qrcode mr-3"></i> QR Code
+                </a>
+            </nav>
         </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-purple-500">
-                <div class="flex items-center">
-                    <div class="p-3 bg-purple-100 rounded-lg mr-4">
-                        <i class="fas fa-mouse-pointer text-purple-600 text-2xl"></i>
-                    </div>
+
+        <div class="flex-1 p-6">
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
-                        <p class="text-gray-600">Total Clicks</p>
-                        <p class="text-3xl font-bold text-gray-800"><%= url.clicks %></p>
-                        <p class="text-sm text-gray-500">
-                            <% if (url.maxClicks) { %>
-                            <%= url.clicks %>/<%= url.maxClicks %> clicks used
-                            <% } else { %>
-                            All time clicks
-                            <% } %>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-500">
-                <div class="flex items-center">
-                    <div class="p-3 bg-blue-100 rounded-lg mr-4">
-                        <i class="fas fa-users text-blue-600 text-2xl"></i>
-                    </div>
-                    <div>
-                        <p class="text-gray-600">Unique Countries</p>
-                        <p class="text-3xl font-bold text-gray-800"><%= countries.length %></p>
-                        <p class="text-sm text-gray-500">Top: <%= countries[0]?._id || 'None' %></p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-green-500">
-                <div class="flex items-center">
-                    <div class="p-3 bg-green-100 rounded-lg mr-4">
-                        <i class="fas fa-mobile-alt text-green-600 text-2xl"></i>
-                    </div>
-                    <div>
-                        <p class="text-gray-600">Mobile Traffic</p>
-                        <%
-                            const mobile = devices.find(d => d._id === 'Mobile')?.count || 0;
-                            const totalDevices = devices.reduce((sum, d) => sum + d.count, 0);
-                            const mobilePercent = totalDevices > 0 ? Math.round((mobile / totalDevices) * 100) : 0;
-                        %>
-                        <p class="text-3xl font-bold text-gray-800"><%= mobilePercent %>%</p>
-                        <p class="text-sm text-gray-500"><%= mobile %> mobile clicks</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-yellow-500">
-                <div class="flex items-center">
-                    <div class="p-3 bg-yellow-100 rounded-lg mr-4">
-                        <i class="fas fa-calendar-alt text-yellow-600 text-2xl"></i>
-                    </div>
-                    <div>
-                        <p class="text-gray-600">Created</p>
-                        <p class="text-lg font-bold text-gray-800"><%= new Date(url.createdAt).toLocaleDateString() %></p>
-                        <p class="text-sm text-gray-500">
-                            <% if (url.expiresAt) { %>
-                            Expires: <%= new Date(url.expiresAt).toLocaleDateString() %>
-                            <% } else { %>
-                            No expiration
-                            <% } %>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-lg">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">
-                    <i class="fas fa-chart-bar mr-2"></i>Clicks Over Time (30 Days)
-                </h2>
-                <canvas id="dailyChart" height="250"></canvas>
-            </div>
-            
-            <div class="bg-white p-6 rounded-xl shadow-lg">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">
-                    <i class="fas fa-clock mr-2"></i>Last 24 Hours
-                </h2>
-                <canvas id="hourlyChart" height="250"></canvas>
-            </div>
-        </div>
-        
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-lg">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">
-                    <i class="fas fa-globe-americas mr-2"></i>Top Countries
-                </h2>
-                <div class="space-y-4">
-                    <% countries.forEach(country => { 
-                        const percent = Math.round((country.count / url.clicks) * 100);
-                    %>
-                    <div>
-                        <div class="flex justify-between mb-1">
-                            <span class="text-gray-700 font-medium"><%= country._id %></span>
-                            <span class="text-gray-600"><%= country.count %> (<%= percent %>%)</span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-purple-600 h-2 rounded-full" style="width: <%= percent %>%"></div>
-                        </div>
-                    </div>
-                    <% }); %>
-                    <% if (countries.length === 0) { %>
-                    <p class="text-gray-500 text-center py-8">No country data available</p>
-                    <% } %>
-                </div>
-            </div>
-            
-            <div class="bg-white p-6 rounded-xl shadow-lg">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">
-                    <i class="fas fa-desktop mr-2"></i>Devices & Browsers
-                </h2>
-                <div class="space-y-6">
-                    <div>
-                        <h3 class="font-medium text-gray-700 mb-2">Devices</h3>
-                        <div class="space-y-2">
-                            <% devices.forEach(device => { 
-                                const percent = Math.round((device.count / url.clicks) * 100);
-                            %>
-                            <div class="flex items-center">
-                                <div class="w-24 text-gray-600"><%= device._id %></div>
-                                <div class="flex-1 ml-2">
-                                    <div class="flex justify-between mb-1">
-                                        <span class="text-sm"><%= device.count %> clicks</span>
-                                        <span class="text-sm"><%= percent %>%</span>
-                                    </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-2">
-                                        <div class="bg-blue-500 h-2 rounded-full" style="width: <%= percent %>%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <% }); %>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="font-medium text-gray-700 mb-2">Browsers</h3>
-                        <div class="flex flex-wrap gap-2">
-                            <% browsers.forEach(browser => { %>
+                        <h1 class="text-3xl font-bold text-gray-800">
+                            <i class="fas fa-chart-line mr-3"></i> Analytics: 
+                            <span class="text-purple-600"><%= url.shortId %></span>
+                        </h1>
+                        <div class="flex flex-wrap items-center gap-2 mt-2">
+                            <a href="<%= APP_DOMAIN %>/<%= url.shortId %>" target="_blank" 
+                               class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm hover:bg-purple-200 transition">
+                                <i class="fas fa-external-link-alt mr-1"></i><%= APP_DOMAIN %>/<%= url.shortId %>
+                            </a>
                             <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">
-                                <%= browser._id %> (<%= browser.count %>)
+                                <i class="fas fa-calendar-alt mr-1"></i> Created <%= new Date(url.createdAt).toLocaleDateString() %>
                             </span>
-                            <% }); %>
+                            <% if (url.requiresPassword) { %>
+                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                                <i class="fas fa-lock mr-1"></i> Password Protected
+                            </span>
+                            <% } %>
+                            <% if (url.maxClicks) { %>
+                            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">
+                                <i class="fas fa-tachometer-alt mr-1"></i> Max <%= url.maxClicks %> clicks
+                            </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <a href="/dashboard" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition flex items-center">
+                            <i class="fas fa-arrow-left mr-2"></i> Back
+                        </a>
+                        <a href="/" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition flex items-center">
+                            <i class="fas fa-plus mr-2"></i> New Link
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-purple-100 rounded-lg mr-4">
+                            <i class="fas fa-mouse-pointer text-purple-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Total Clicks</p>
+                            <p class="text-3xl font-bold text-gray-800"><%= url.clicks %></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-blue-100 rounded-lg mr-4">
+                            <i class="fas fa-globe text-blue-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Countries</p>
+                            <p class="text-3xl font-bold text-gray-800"><%= countries.length %></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-green-100 rounded-lg mr-4">
+                            <i class="fas fa-mobile-alt text-green-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Mobile</p>
+                            <%
+                                const mobile = devices.find(d => d._id === 'Mobile')?.count || 0;
+                                const totalDevices = devices.reduce((sum, d) => sum + d.count, 0);
+                                const mobilePercent = totalDevices > 0 ? Math.round((mobile / totalDevices) * 100) : 0;
+                            %>
+                            <p class="text-3xl font-bold text-gray-800"><%= mobilePercent %>%</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-yellow-100 rounded-lg mr-4">
+                            <i class="fas fa-calendar text-yellow-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Expires</p>
+                            <p class="text-lg font-bold text-gray-800">
+                                <% if (url.expiresAt) { %>
+                                    <%= new Date(url.expiresAt).toLocaleDateString() %>
+                                <% } else { %>
+                                    Never
+                                <% } %>
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="bg-white p-6 rounded-xl shadow-lg">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">
-                    <i class="fas fa-share-alt mr-2"></i>Top Referrers
-                </h2>
-                <div class="space-y-3">
-                    <% referrers.forEach(ref => { %>
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fas fa-external-link-alt text-gray-400 mr-3"></i>
-                            <div class="truncate max-w-xs" title="<%= ref._id %>">
-                                <%= ref._id.length > 40 ? ref._id.substring(0, 40) + '...' : ref._id %>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-chart-bar mr-2"></i> Daily Clicks (Last 30 Days)
+                    </h2>
+                    <canvas id="dailyChart" height="250"></canvas>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-clock mr-2"></i> Last 24 Hours
+                    </h2>
+                    <canvas id="hourlyChart" height="250"></canvas>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-globe-americas mr-2"></i> Top Countries
+                    </h2>
+                    <div class="space-y-4">
+                        <% countries.forEach(country => { 
+                            const percent = Math.round((country.count / url.clicks) * 100);
+                        %>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-gray-700">
+                                    <span class="font-medium"><%= country._id %></span>
+                                    <% if (country.code) { %>
+                                    <span class="text-xs text-gray-500">(<%= country.code %>)</span>
+                                    <% } %>
+                                </span>
+                                <span class="text-gray-600"><%= country.count %> (<%= percent %>%)</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-purple-600 h-2 rounded-full" style="width: <%= percent %>%"></div>
                             </div>
                         </div>
-                        <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded text-sm font-medium">
-                            <%= ref.count %>
-                        </span>
+                        <% }); %>
+                        <% if (countries.length === 0) { %>
+                        <p class="text-gray-500 text-center py-8">No country data available</p>
+                        <% } %>
                     </div>
-                    <% }); %>
-                    <% if (referrers.length === 0) { %>
-                    <div class="text-center py-8 text-gray-500">
-                        <i class="fas fa-link text-3xl mb-3 block"></i>
-                        <p>No referrer data</p>
-                        <p class="text-sm mt-1">All traffic is direct</p>
-                    </div>
-                    <% } %>
                 </div>
-            </div>
-        </div>
-        
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
-            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                <h2 class="text-xl font-semibold text-gray-800">
-                    <i class="fas fa-list mr-2"></i>Recent Clicks (<%= analytics.length %>)
-                </h2>
-                <button onclick="refreshStats()" class="px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
-                    <i class="fas fa-sync-alt mr-2"></i>Refresh
-                </button>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">IP Address</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Device</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Browser/OS</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Referrer</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        <% analytics.forEach(log => { %>
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900"><%= new Date(log.timestamp).toLocaleDateString() %></div>
-                                <div class="text-xs text-gray-500"><%= new Date(log.timestamp).toLocaleTimeString() %></div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <code class="text-sm font-mono text-gray-800 bg-gray-100 px-2 py-1 rounded"><%= log.ip %></code>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-desktop mr-2"></i> Devices & Browsers
+                    </h2>
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="font-medium text-gray-700 mb-2">Devices</h3>
+                            <div class="space-y-2">
+                                <% devices.forEach(device => { 
+                                    const percent = Math.round((device.count / url.clicks) * 100);
+                                %>
                                 <div class="flex items-center">
-                                    <i class="fas fa-map-marker-alt text-red-400 mr-2"></i>
-                                    <div>
-                                        <div class="font-medium"><%= log.country %></div>
-                                        <div class="text-sm text-gray-500"><%= log.city %></div>
+                                    <div class="w-24 text-gray-600"><%= device._id %></div>
+                                    <div class="flex-1 ml-2">
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-sm"><%= device.count %> clicks</span>
+                                            <span class="text-sm"><%= percent %>%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-blue-500 h-2 rounded-full" style="width: <%= percent %>%"></div>
+                                        </div>
                                     </div>
                                 </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-3 py-1 text-xs rounded-full 
-                                    <%= log.device === 'Mobile' ? 'bg-blue-100 text-blue-800' : 
-                                       log.device === 'Tablet' ? 'bg-purple-100 text-purple-800' : 
-                                       'bg-gray-100 text-gray-800' %>">
-                                    <i class="fas <%= log.device === 'Mobile' ? 'fa-mobile-alt' : 
-                                                  log.device === 'Tablet' ? 'fa-tablet-alt' : 
-                                                  'fa-desktop' %> mr-1"></i>
-                                    <%= log.device %>
+                                <% }); %>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-700 mb-2">Browsers</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <% browsers.forEach(browser => { %>
+                                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">
+                                    <%= browser._id %> (<%= browser.count %>)
                                 </span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="text-sm text-gray-900"><%= log.browser %></div>
-                                <div class="text-xs text-gray-500"><%= log.os %></div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="max-w-xs truncate text-sm text-gray-600" title="<%= log.referrer %>">
-                                    <% if (log.referrer === 'Direct') { %>
-                                    <span class="text-gray-400">Direct</span>
-                                    <% } else { %>
-                                    <%= log.referrer %>
-                                    <% } %>
-                                </div>
-                            </td>
-                        </tr>
-                        <% }); %>
-                        <% if (analytics.length === 0) { %>
-                        <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">
-                                <i class="fas fa-inbox text-4xl mb-4 block"></i>
-                                <p class="text-lg">No clicks recorded yet</p>
-                                <p class="text-sm mt-2">Share your link to start tracking</p>
-                            </td>
-                        </tr>
-                        <% } %>
-                    </tbody>
-                </table>
+                                <% }); %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-list mr-2"></i> Recent Clicks
+                    </h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Device</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Browser/OS</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Referrer</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <% analytics.forEach(log => { %>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900"><%= new Date(log.timestamp).toLocaleDateString() %></div>
+                                    <div class="text-xs text-gray-500"><%= new Date(log.timestamp).toLocaleTimeString() %></div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-map-marker-alt text-red-400 mr-2"></i>
+                                        <div>
+                                            <div class="font-medium"><%= log.country %></div>
+                                            <div class="text-sm text-gray-500"><%= log.city || 'Unknown' %></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-3 py-1 text-xs rounded-full 
+                                        <%= log.device === 'Mobile' ? 'bg-blue-100 text-blue-800' : 
+                                           log.device === 'Tablet' ? 'bg-purple-100 text-purple-800' : 
+                                           'bg-gray-100 text-gray-800' %>">
+                                        <i class="fas <%= log.device === 'Mobile' ? 'fa-mobile-alt' : 
+                                                      log.device === 'Tablet' ? 'fa-tablet-alt' : 
+                                                      'fa-desktop' %> mr-1"></i>
+                                        <%= log.device %>
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-900"><%= log.browser %></div>
+                                    <div class="text-xs text-gray-500"><%= log.os %></div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="max-w-xs truncate text-sm text-gray-600" title="<%= log.referrer %>">
+                                        <% if (log.referrer === 'Direct') { %>
+                                        <span class="text-gray-400">Direct</span>
+                                        <% } else { %>
+                                        <%= log.referrer %>
+                                        <% } %>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }); %>
+                            <% if (analytics.length === 0) { %>
+                            <tr>
+                                <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                                    <i class="fas fa-inbox text-4xl mb-4 block"></i>
+                                    <p class="text-lg">No clicks recorded yet</p>
+                                </td>
+                            </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-    
+
     <script>
         const dailyCtx = document.getElementById('dailyChart').getContext('2d');
         const dailyData = <%= JSON.stringify(dailyClicks) %>;
         
-        const dailyLabels = dailyData.map(d => {
-            const date = new Date(d._id);
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        });
+        const dailyLabels = dailyData.map(d => d.date);
         const dailyValues = dailyData.map(d => d.count);
         
         new Chart(dailyCtx, {
@@ -341,11 +327,7 @@
             options: {
                 responsive: true,
                 plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false
-                    }
+                    legend: { display: false }
                 },
                 scales: {
                     y: {
@@ -365,7 +347,7 @@
         
         const hourlyLabels = Array.from({length: 24}, (_, i) => i);
         const hourlyValues = hourlyLabels.map(hour => {
-            const found = hourlyData.find(d => d._id === hour);
+            const found = hourlyData.find(d => d.hour === hour);
             return found ? found.count : 0;
         });
         
@@ -385,4 +367,20 @@
             options: {
                 responsive: true,
                 plugins: {
-           
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
