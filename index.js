@@ -626,7 +626,120 @@ app.get('/api/stats/:shortId', async (req, res) => {
         requiresPassword: url.requiresPassword,
         createdAt: url.createdAt,
         expiresAt: url.expiresAt,
-        deleteAt: url.dele
+        deleteAt: url.deleteAt,
+        countries: countryStats,
+        devices: deviceStats,
+        recentClicks,
+        totalAnalytics: analytics.length
+      }
+    });
+  } catch (error) {
+    console.error('API Stats error:', error);
+    res.status(500).json({ success: false, error: 'Server error' });
+  }
+});
+
+app.get('/api/realtime/:shortId', async (req, res) => {
+  try {
+    const { shortId } = req.params;
+    const url = await Url.findOne({ shortId });
+    if (!url) return res.status(404).json({ success: false, error: 'URL not found' });
+    
+    // Get clicks from last 5 minutes
+    const recentClicks = await Analytics.countDocuments({
+      shortId,
+      timestamp: { $gte: new Date(Date.now() - 5 * 60 * 1000) }
+    });
+    
+    res.json({
+      success: true,
+      data: {
+        shortId: url.shortId,
+        clicks: url.clicks,
+        recentClicks,
+        maxClicks: url.maxClicks,
+        requiresPassword: url.requiresPassword,
+        updatedAt: new Date()
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Server error' });
+  }
+});
+
+app.delete('/api/delete/:shortId', async (req, res) => {
+  try {
+    const { shortId } = req.params;
+    const result = await Url.deleteOne({ shortId });
+    if (result.deletedCount > 0) {
+      await Analytics.deleteMany({ shortId });
+      res.json({ success: true, message: 'URL deleted successfully' });
+    } else {
+      res.status(404).json({ success: false, error: 'URL not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Server error' });
+  }
+});
+
+app.get('/api/history', (req, res) => {
+  res.json({
+    success: true,
+    message: 'History should be managed in localStorage'
+  });
+});
+
+app.get('/api/health', (req, res) => {
+  const geo = getGeoFromHeaders(req);
+  
+  res.json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    vercel: process.env.VERCEL === '1',
+    geo: {
+      ip: getClientIP(req),
+      country: geo.country,
+      countryCode: geo.countryCode,
+      region: geo.region,
+      city: geo.city,
+      isp: geo.isp
+    },
+    headers: {
+      'x-real-ip': req.headers['x-real-ip'],
+      'x-forwarded-for': req.headers['x-forwarded-for'],
+      'x-vercel-ip-country': req.headers['x-vercel-ip-country'],
+      'x-vercel-ip-city': req.headers['x-vercel-ip-city']
+    }
+  });
+});
+
+app.use((req, res) => {
+  res.status(404).render('404', { 
+    shortId: req.path.slice(1),
+    APP_DOMAIN: process.env.APP_DOMAIN || `${req.protocol}://${req.get('host')}`
+  });
+});
+
+app.use((err, req, res, next) => {
+  console.error('Global error:', err.stack);
+  res.status(500).render('error', { 
+    message: 'Something went wrong!',
+    APP_DOMAIN: process.env.APP_DOMAIN || `${req.protocol}://${req.get('host')}`
+  });
+});
+
+// Export untuk Vercel
+if (process.env.NODE_ENV === 'production') {
+  module.exports = app;
+} else {
+  app.listen(port, () => {
+    console.log(`🚀 URL Shortener running on port ${port}`);
+    console.log(`🌐 Local: http://localhost:${port}`);
+    console.log(`📊 Dashboard: http://localhost:${port}/dashboard`);
+    console.log(`🔧 Debug: http://localhost:${port}/debug/geo`);
+  });
+}
 /*
 require('dotenv').config();
 const express = require('express');
