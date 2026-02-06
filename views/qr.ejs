@@ -402,4 +402,238 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-r from-gray-800/50 to-gray-900/50">
                             <div class="p-2 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-lg">
-                                <i class="fas fa-mobile-alt text-blue-40
+                                <i class="fas fa-mobile-alt text-blue-400"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-1">Print & Display</h4>
+                                <p class="text-sm text-gray-400">Print on marketing materials, posters, or business cards</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-r from-gray-800/50 to-gray-900/50">
+                            <div class="p-2 bg-gradient-to-br from-purple-500/20 to-indigo-500/20 rounded-lg">
+                                <i class="fas fa-desktop text-purple-400"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-1">Digital Use</h4>
+                                <p class="text-sm text-gray-400">Add to websites, presentations, or digital documents</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-r from-gray-800/50 to-gray-900/50">
+                            <div class="p-2 bg-gradient-to-br from-emerald-500/20 to-green-500/20 rounded-lg">
+                                <i class="fas fa-share-alt text-emerald-400"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-1">Share Online</h4>
+                                <p class="text-sm text-gray-400">Share via social media, email, or messaging apps</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Actions -->
+                <div class="mt-8 pt-6 border-t border-gray-800/50 text-center">
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="/" class="px-6 py-3 glass rounded-xl hover:bg-white/10 transition flex items-center justify-center gap-2">
+                            <i class="fas fa-plus"></i>
+                            <span>Create Another Short URL</span>
+                        </a>
+                        <button onclick="printQR()" class="px-6 py-3 bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl hover:from-gray-700 hover:to-gray-800 transition flex items-center justify-center gap-2">
+                            <i class="fas fa-print"></i>
+                            <span>Print QR Code</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Watermark -->
+        <p class="text-center text-gray-600 text-sm mt-6 font-mono">
+            <i class="fas fa-qrcode mr-1"></i> ASUMA QR Generator v2.0
+        </p>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-gradient-to-r from-gray-900 to-gray-800 text-white px-6 py-4 rounded-xl shadow-2xl font-medium flex items-center gap-3 z-50 hidden">
+        <i class="fas fa-check-circle text-emerald-400"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+        // Copy URL with enhanced feedback
+        async function copyShortUrl(url) {
+            try {
+                await navigator.clipboard.writeText(url);
+                
+                const copyIcon = document.getElementById('copyIcon');
+                const copyText = document.getElementById('copyText');
+                
+                // Show success feedback
+                showToast('URL copied to clipboard!');
+                
+                // Animate the copy button
+                copyIcon.className = 'fas fa-check text-emerald-400';
+                copyText.textContent = 'Copied!';
+                
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    copyIcon.className = 'fas fa-copy';
+                    copyText.textContent = 'Copy';
+                }, 2000);
+                
+            } catch (err) {
+                showToast('Failed to copy URL', 'error');
+            }
+        }
+        
+        // Download QR code
+        function downloadQR(format) {
+            const qrImg = document.querySelector('img[src*="<%= qrCode %>"]');
+            const link = document.createElement('a');
+            
+            if (format === 'png') {
+                link.href = qrImg.src;
+                link.download = `asuma-qr-<%= shortId %>.png`;
+                showToast('Downloading QR code as PNG...');
+            } else if (format === 'svg') {
+                // Convert to SVG (this is a simplified version)
+                // In a real app, you would have an SVG endpoint
+                link.href = qrImg.src.replace(/\.png$/, '.svg');
+                link.download = `asuma-qr-<%= shortId %>.svg`;
+                showToast('Downloading QR code as SVG...');
+            }
+            
+            link.click();
+            
+            // Show success toast after a delay
+            setTimeout(() => {
+                showToast('QR code downloaded successfully!');
+            }, 1000);
+        }
+        
+        // Print QR code
+        function printQR() {
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>QR Code - <%= shortId %></title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 40px; text-align: center; }
+                        .qr-container { margin: 20px auto; max-width: 300px; }
+                        h1 { color: #333; margin-bottom: 10px; }
+                        p { color: #666; margin: 5px 0; }
+                        .info { background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0; }
+                        @media print {
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>ASUMA Link QR Code</h1>
+                    <div class="info">
+                        <p><strong>Short URL:</strong> <%= shortUrl %></p>
+                        <p><strong>Short ID:</strong> <%= shortId %></p>
+                        <p><strong>Total Clicks:</strong> <%= clicks %></p>
+                        <p><strong>Generated:</strong> ${new Date().toLocaleDateString()}</p>
+                    </div>
+                    <div class="qr-container">
+                        <img src="<%= qrCode %>" alt="QR Code" style="width: 100%;">
+                    </div>
+                    <p class="no-print"><br>This QR code will automatically redirect to: <%= shortUrl %></p>
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                            setTimeout(() => window.close(), 500);
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+        
+        // Toast notification system
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            // Set message and type
+            toastMessage.textContent = message;
+            
+            // Set icon based on type
+            const icon = toast.querySelector('i');
+            if (type === 'error') {
+                icon.className = 'fas fa-exclamation-circle text-red-400';
+                toast.style.background = 'linear-gradient(to right, #7f1d1d, #991b1b)';
+            } else {
+                icon.className = 'fas fa-check-circle text-emerald-400';
+                toast.style.background = 'linear-gradient(to right, #0f172a, #1e293b)';
+            }
+            
+            // Show toast
+            toast.style.display = 'flex';
+            toast.style.animation = 'fadeIn 0.3s ease-out';
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 300);
+            }, 3000);
+        }
+        
+        // Add CSS for toast animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes fadeOut {
+                from { opacity: 1; transform: translateY(0); }
+                to { opacity: 0; transform: translateY(20px); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Initialize page animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add floating animation to QR container
+            const qrContainer = document.querySelector('.qr-container');
+            qrContainer.classList.add('float');
+            
+            // Add hover effects to all glass cards
+            const glassCards = document.querySelectorAll('.glass');
+            glassCards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-2px)';
+                    card.style.boxShadow = '0 15px 40px rgba(0, 0, 0, 0.4)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                    card.style.boxShadow = '';
+                });
+            });
+            
+            // Initialize color theme buttons
+            const colorButtons = document.querySelectorAll('.glass.rounded-2xl.p-6 button.w-10');
+            colorButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    colorButtons.forEach(b => b.style.borderColor = '#1e293b');
+                    this.style.borderColor = '#ffffff';
+                    
+                    // In a real app, you would update the QR code color here
+                    showToast('Color theme updated!');
+                });
+            });
+            
+            // Show welcome toast
+            setTimeout(() => {
+                showToast('QR code generated successfully! Ready to download or share.');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
