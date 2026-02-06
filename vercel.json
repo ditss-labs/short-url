@@ -14,7 +14,7 @@
     }
   ],
   "env": {
-    "MONGODB_URI": "@mongodb_uri",
+    "MONGODB_URI": "mongodb+srv://Vercel-Admin-short-url-asumaa:yRzF1hnM0kPSx6iu@short-url-asumaa.8nzmhxb.mongodb.net/?retryWrites=true&w=majority",
     "APP_DOMAIN": "https://s.asuma.my.id"
   }
 }
