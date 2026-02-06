@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASUMA Link - URL Shortener</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .floating-label {
+            transform: translateY(-50%);
+            transition: all 0.2s ease;
+        }
+        .form-input:focus + .floating-label,
+        .form-input:not(:placeholder-shown) + .floating-label {
+            transform: translateY(-140%);
+            font-size: 0.75rem;
+            color: #8b5cf6;
+        }
+        .tab-active {
+            border-bottom: 3px solid #8b5cf6;
+            color: #8b5cf6;
+        }
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <div class="inline-flex items-center justify-center p-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl shadow-xl mb-6">
+                    <i class="fas fa-link text-4xl text-white"></i>
+                </div>
+                <h1 class="text-5xl font-bold text-gray-800 mb-3">ASUMA Link</h1>
+                <p class="text-xl text-gray-600">Shorten, track, and analyze your links with advanced analytics</p>
+                <div class="mt-4 inline-flex items-center space-x-2 text-sm text-purple-600 bg-purple-100 px-4 py-2 rounded-full">
+                    <i class="fas fa-bolt"></i>
+                    <span>Powered by Vercel Edge Network</span>
+                    <i class="fas fa-globe"></i>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden mb-8">
+                <div class="border-b border-gray-200">
+                    <div class="flex">
+                        <button id="basicTab" class="flex-1 py-4 text-center font-medium text-gray-700 tab-active">
+                            <i class="fas fa-bolt mr-2"></i>Basic
+                        </button>
+                        <button id="advancedTab" class="flex-1 py-4 text-center font-medium text-gray-600 hover:text-gray-900">
+                            <i class="fas fa-cogs mr-2"></i>Advanced
+                        </button>
+                    </div>
+                </div>
+                
+                <form id="shortenForm" class="p-8">
+                    <div id="basicSection">
+                        <div class="mb-8">
+                            <div class="relative">
+                                <input type="url" id="originalUrl" required
+                                       placeholder=" "
+                                       class="form-input w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition duration-300">
+                                <label class="floating-label absolute left-6 top-1/2 text-gray-500 bg-white px-2">
+                                    <i class="fas fa-link mr-2"></i>Enter your long URL
+                                </label>
+                            </div>
+                            <p class="mt-2 text-sm text-gray-500">Example: https://example.com/very-long-url</p>
+                        </div>
+                        
+                        <div class="mb-8">
+                            <div class="relative">
+                                <input type="text" id="customId" 
+                                       placeholder=" "
+                                       pattern="[a-zA-Z0-9_-]{3,20}"
+                                       class="form-input w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition duration-300">
+                                <label class="floating-label absolute left-6 top-1/2 text-gray-500 bg-white px-2">
+                                    <i class="fas fa-pen mr-2"></i>Custom alias (optional)
+                                </label>
+                            </div>
+                            <p class="mt-2 text-sm text-gray-500">Customize your short link: <%= APP_DOMAIN %>/<span id="customPreview" class="font-semibold text-purple-600">your-alias</span></p>
+                        </div>
+                    </div>
+                    
+                    <div id="advancedSection" class="hidden">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-calendar-alt mr-2"></i>Expires After
+                                </label>
+                                <select id="expiresInDays" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                    <option value="1">24 Hours</option>
+                                    <option value="7">1 Week</option>
+                                    <option value="30" selected>30 Days</option>
+                                    <option value="90">3 Months</option>
+                                    <option value="365">1 Year</option>
+                                    <option value="9999">Never</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-tachometer-alt mr-2"></i>Max Clicks
+                                </label>
+                                <input type="number" id="maxClicks" min="1" max="1000000"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                       placeholder="Unlimited">
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-lock mr-2"></i>Password Protection
+                                </label>
+                                <input type="password" id="password"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                       placeholder="Optional password">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-clock mr-2"></i>Schedule Deletion
+                                </label>
+                                <input type="datetime-local" id="deleteAt"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-6">
+                        <button type="submit" id="shortenBtn"
+                                class="w-full py-4 px-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold text-lg rounded-xl hover:from-purple-700 hover:to-blue-700 transform hover:-translate-y-1 transition duration-300 shadow-lg hover:shadow-xl flex items-center justify-center animate-pulse">
+                            <i class="fas fa-magic mr-3"></i>
+                            <span id="btnText">Shorten URL</span>
+                            <i class="fas fa-arrow-right ml-3"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div id="result" class="bg-white rounded-2xl shadow-2xl p-8 mb-8 hidden animate-fade-in">
+                <div class="flex items-start mb-6">
+                    <div class="p-3 bg-green-100 rounded-xl mr-4">
+                        <i class="fas fa-check-circle text-3xl text-green-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800">Your Short URL is Ready!</h3>
+                        <p class="text-gray-600">Share this link anywhere</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Short URL:</label>
+                        <div class="flex items-center">
+                            <input type="text" id="shortUrlOutput" readonly
+                                   class="flex-1 px-6 py-4 text-lg border-2 border-gray-300 rounded-l-xl bg-gray-50 font-mono">
+                            <button onclick="copyToClipboard('shortUrlOutput')"
+                                    class="px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-r-xl hover:from-green-600 hover:to-emerald-700 transition flex items-center">
+                                <i class="fas fa-copy mr-2"></i>Copy
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-gray-50 p-4 rounded-xl">
+                            <label class="block text-sm font-medium text-gray-600 mb-1">Clicks</label>
+                            <p id="clicksCount" class="text-2xl font-bold text-purple-600">0</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-xl">
+                            <label class="block text-sm font-medium text-gray-600 mb-1">Status</label>
+                            <p id="urlStatus" class="text-lg font-semibold text-green-600">Active</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-xl">
+                            <label class="block text-sm font-medium text-gray-600 mb-1">Expires</label>
+                            <p id="expiresDate" class="text-lg font-semibold text-gray-800"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-4 pt-4">
+                        <a href="#" id="visitLink" target="_blank"
+                           class="flex-1 min-w-[200px] py-3 px-6 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition text-center flex items-center justify-center">
+                            <i class="fas fa-external-link-alt mr-2"></i>Visit Link
+                        </a>
+                        <a href="#" id="qrLink" target="_blank"
+                           class="flex-1 min-w-[200px] py-3 px-6 bg-purple-500 text-white rounded-xl hover:bg-purple-600 transition text-center flex items-center justify-center">
+                            <i class="fas fa-qrcode mr-2"></i>QR Code
+                        </a>
+                        <a href="/dashboard"
+                           class="flex-1 min-w-[200px] py-3 px-6 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition text-center flex items-center justify-center">
+                            <i class="fas fa-chart-bar mr-2"></i>Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="text-center">
+                        <i class="fas fa-shield-alt text-4xl text-green-500 mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Secure</h3>
+                        <p class="text-gray-600">Password protection & HTTPS encryption</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="text-center">
+                        <i class="fas fa-chart-line text-4xl text-blue-500 mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Analytics</h3>
+                        <p class="text-gray-600">Track clicks, countries, devices & more</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="text-center">
+                        <i class="fas fa-bolt text-4xl text-purple-500 mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Fast</h3>
+                        <p class="text-gray-600">Global CDN powered by Vercel Edge</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <a href="/dashboard" 
+                   class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-xl hover:from-gray-900 hover:to-black transition shadow-lg">
+                    <i class="fas fa-tachometer-alt mr-2"></i>View Analytics Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('basicTab').addEventListener('click', () => {
+            document.getElementById('basicTab').classList.add('tab-active');
+            document.getElementById('advancedTab').classList.remove('tab-active');
+            document.getElementById('basicSection').classList.remove('hidden');
+            document.getElementById('advancedSection').classList.add('hidden');
+        });
+        
+        document.getElementById('advancedTab').addEventListener('click', () => {
+            document.getElementById('advancedTab').classList.add('tab-active');
+            document.getElementById('basicTab').classList.remove('tab-active');
+            document.getElementById('advancedSection').classList.remove('hidden');
+            document.getElementById('basicSection').classList.add('hidden');
+        });
+        
+        document.getElementById('customId').addEventListener('input', (e) => {
+            document.getElementById('customPreview').textContent = e.target.value || 'your-alias';
+        });
+        
+        document.getElementById('shortenForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const originalUrl = document.getElementById('originalUrl').value;
+            const customId = document.getElementById('customId').value;
+            const expiresInDays = document.getElementById('expiresInDays').value;
+            const password = document.getElementById('password').value;
+            const maxClicks = document.getElementById('maxClicks').value;
+            const deleteAt = document.getElementById('deleteAt').value;
+            const shortenBtn = document.getElementById('shortenBtn');
+            
+            document.getElementById('result').classList.add('hidden');
+            
+            shortenBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+            shortenBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/shorten', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        originalUrl, 
+                        customId, 
+                        expiresInDays, 
+                        password, 
+                        maxClicks,
+                        deleteAt 
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('shortUrlOutput').value = data.shortUrl;
+                    document.getElementById('clicksCount').textContent = '0';
+                    document.getElementById('expiresDate').textContent = 
+                        new Date(data.expiresAt).toLocaleDateString();
+                    document.getElementById('visitLink').href = data.shortUrl;
+                    document.getElementById('qrLink').href = data.qrCode;
+                    
+                    document.getElementById('result').classList.remove('hidden');
+                    document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+                    
+                    if (data.requiresPassword) {
+                        document.getElementById('urlStatus').textContent = 'Password Protected';
+                        document.getElementById('urlStatus').className = 'text-lg font-semibold text-yellow-600';
+                    }
+                    
+                    if (data.maxClicks) {
+                        document.getElementById('urlStatus').textContent = `Max ${data.maxClicks} clicks`;
+                        document.getElementById('urlStatus').className = 'text-lg font-semibold text-blue-600';
+                    }
+                } else {
+                    alert(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            } finally {
+                shortenBtn.innerHTML = '<i class="fas fa-magic mr-3"></i><span id="btnText">Shorten URL</span><i class="fas fa-arrow-right ml-3"></i>';
+                shortenBtn.disabled = false;
+            }
+        });
+        
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            element.select();
+            element.setSelectionRange(0, 99999);
+            document.execCommand('copy');
+            
+            const button = event.target.closest('button');
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check mr-2"></i>Copied!';
+            button.classList.remove('from-green-500', 'to-emerald-600');
+            button.classList.add('from-emerald-500', 'to-green-600');
+            
+            setTimeout(() => {
+                button.innerHTML = originalHTML;
+                button.classList.remove('from-emerald-500', 'to-green-600');
+                button.classList.add('from-green-500', 'to-emerald-600');
+            }, 2000);
+        }
+        
+        // Set minimum datetime for schedule deletion
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('deleteAt').min = now.toISOString().slice(0, 16);
+    </script>
+</body>
+</html>
