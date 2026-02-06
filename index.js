@@ -14,7 +14,6 @@ const cron = require('node-cron');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Trust Vercel proxy
 app.set('trust proxy', true);
 
 app.use(helmet({
@@ -147,7 +146,6 @@ const parseUserAgent = (ua) => {
   let os = 'Other';
   let device = 'Desktop';
   
-  // Browser detection
   if (ua.includes('Chrome') && !ua.includes('Edg')) browser = 'Chrome';
   else if (ua.includes('Firefox')) browser = 'Firefox';
   else if (ua.includes('Safari') && !ua.includes('Chrome')) browser = 'Safari';
@@ -155,7 +153,6 @@ const parseUserAgent = (ua) => {
   else if (ua.includes('Opera')) browser = 'Opera';
   else if (ua.includes('Brave')) browser = 'Brave';
   
-  // OS detection
   if (ua.includes('Windows')) os = 'Windows';
   else if (ua.includes('Mac')) os = 'macOS';
   else if (ua.includes('Linux')) os = 'Linux';
@@ -163,7 +160,6 @@ const parseUserAgent = (ua) => {
   else if (ua.includes('iOS') || ua.includes('iPhone')) os = 'iOS';
   else if (ua.includes('iPad')) os = 'iPadOS';
   
-  // Device detection
   if (ua.includes('Mobile') || ua.includes('Android') || ua.includes('iPhone')) device = 'Mobile';
   else if (ua.includes('Tablet') || ua.includes('iPad')) device = 'Tablet';
   else if (ua.includes('TV')) device = 'TV';
@@ -172,21 +168,23 @@ const parseUserAgent = (ua) => {
   return { browser, os, device };
 };
 
-cron.schedule('0 * * * *', async () => {
-  try {
-    const expired = await Url.deleteMany({ 
-      $or: [
-        { maxClicks: { $ne: null, $lte: { $expr: '$clicks' } } },
-        { deleteAt: { $ne: null, $lte: new Date() } }
-      ]
-    });
-    if (expired.deletedCount > 0) {
-      console.log(`🔄 Cron: Deleted ${expired.deletedCount} expired URLs`);
+if (process.env.NODE_ENV === 'production') {
+  cron.schedule('0 * * * *', async () => {
+    try {
+      const expired = await Url.deleteMany({ 
+        $or: [
+          { maxClicks: { $ne: null, $lte: { $expr: '$clicks' } } },
+          { deleteAt: { $ne: null, $lte: new Date() } }
+        ]
+      });
+      if (expired.deletedCount > 0) {
+        console.log(`🔄 Cron: Deleted ${expired.deletedCount} expired URLs`);
+      }
+    } catch (error) {
+      console.error('❌ Cron job error:', error);
     }
-  } catch (error) {
-    console.error('❌ Cron job error:', error);
-  }
-});
+  });
+}
 
 app.get('/', (req, res) => {
   res.render('index', { 
@@ -635,4 +633,53 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-app.get
+app.get('/api/trending', async (req, res) => {
+  try {
+    const trending = await Url.find()
+      .sort({ clicks: -1, createdAt: -1 })
+      .limit(20)
+      .select('shortId originalUrl clicks createdAt -_id');
+    
+    const totalClicks = await Url.aggregate([
+      { $group: { _id: null, total: { $sum: "$clicks" } } }
+    ]);
+    
+    res.json({
+      success: true,
+      data: {
+        trending,
+        totalClicks: totalClicks[0]?.total || 0,
+        totalUrls: await Url.countDocuments()
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Server error' });
+  }
+});
+
+app.use((req, res) => {
+  res.status(404).render('404', { 
+    shortId: req.path.slice(1),
+    APP_DOMAIN: process.env.APP_DOMAIN || `${req.protocol}://${req.get('host')}`
+  });
+});
+
+app.use((err, req, res, next) => {
+  console.error('Global error:', err.stack);
+  res.status(500).render('error', { 
+    message: 'Something went wrong!',
+    APP_DOMAIN: process.env.APP_DOMAIN || `${req.protocol}://${req.get('host')}`
+  });
+});
+
+// Export untuk Vercel
+if (process.env.NODE_ENV === 'production') {
+  module.exports = app;
+} else {
+  app.listen(port, () => {
+    console.log(`🚀 URL Shortener running on port ${port}`);
+    console.log(`🌐 Local: http://localhost:${port}`);
+    console.log(`📊 Dashboard: http://localhost:${port}/dashboard`);
+    console.log(`🔧 Debug: http://localhost:${port}/debug/geo`);
+  });
+}
