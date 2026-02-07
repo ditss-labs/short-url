@@ -40,7 +40,7 @@ app.use('/api/', limiter);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://Vercel-Admin-short-url-asumaa:yRzF1hnM0kPSx6iu@short-url-asumaa.8nzmhxb.mongodb.net/?retryWrites=true&w=majority';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://Ditss-Admin-short-url-asumaa:yRzF1hnMy';
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
