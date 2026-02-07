@@ -78,6 +78,6 @@ Antarmuka dirancang dengan prinsip **modern, nyaman, dan fungsional** — fokus 
 
 ---
 
-Dibuat dengan ❤️ oleh [Aditia Nugraha Putra](https://ditss.biz.id)  
+Dibuat dengan ❤️ oleh [ditss](https://ditss.biz.id)  
 Untuk pertanyaan atau kolaborasi, silakan hubungi melalui [social media](https://ditss.biz.id).
 ```
