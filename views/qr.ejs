@@ -13,11 +13,33 @@
             --accent: #10b981;
         }
         
+        * {
+            box-sizing: border-box;
+        }
+        
         body {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: #f1f5f9;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             min-height: 100vh;
+            overflow-x: hidden;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
         }
         
         .glass {
@@ -32,7 +54,7 @@
             backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 10px 30px rgba(0, 0, 0, 0.2),
                 0 0 0 1px rgba(255, 255, 255, 0.05),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
@@ -57,7 +79,7 @@
         }
         
         .hover-glow:hover {
-            box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
             transform: translateY(-2px);
         }
         
@@ -89,14 +111,16 @@
         }
         
         .qr-container {
-            padding: 20px;
+            padding: 15px;
             background: linear-gradient(45deg, #ffffff 0%, #f8fafc 100%);
-            border-radius: 20px;
+            border-radius: 16px;
             box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 15px 35px rgba(0, 0, 0, 0.2),
                 inset 0 1px 0 rgba(255, 255, 255, 0.8);
             position: relative;
             overflow: hidden;
+            max-width: 280px;
+            margin: 0 auto;
         }
         
         .qr-container::before {
@@ -105,7 +129,7 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
+            height: 3px;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
         }
         
@@ -114,7 +138,7 @@
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
@@ -123,8 +147,8 @@
         }
         
         @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-15px) rotate(5deg); }
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
         
         .pulse {
@@ -133,7 +157,7 @@
         
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(99, 102, 241, 0); }
+            70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
             100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
         }
         
@@ -188,274 +212,407 @@
         }
         
         .floating-elements {
-            position: absolute;
+            position: fixed;
             pointer-events: none;
             z-index: 1;
         }
         
         .text-glow {
-            text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+            text-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
         }
         
-        .qr-pattern {
-            background: 
-                radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+        /* Mobile-first responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+                display: block;
+            }
+            
+            .qr-container {
+                max-width: 250px;
+                padding: 12px;
+            }
+            
+            .glass-card {
+                margin: 8px;
+                border-radius: 20px;
+            }
+            
+            .floating-elements {
+                display: none; /* Hide on mobile for better performance */
+            }
+            
+            h1 {
+                font-size: 1.75rem !important;
+            }
+            
+            h2, h3 {
+                font-size: 1.25rem !important;
+            }
+            
+            .text-3xl {
+                font-size: 1.5rem !important;
+            }
+            
+            .text-2xl {
+                font-size: 1.25rem !important;
+            }
+            
+            .p-8 {
+                padding: 1.5rem !important;
+            }
+            
+            .p-6 {
+                padding: 1.25rem !important;
+            }
+            
+            .gap-8 {
+                gap: 1.5rem !important;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .flex-col {
+                flex-direction: column !important;
+            }
+            
+            .space-y-6 > * + * {
+                margin-top: 1rem !important;
+            }
+            
+            .overflow-hidden {
+                overflow: visible !important;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .qr-container {
+                max-width: 220px;
+            }
+            
+            .p-8 {
+                padding: 1rem !important;
+            }
+            
+            .text-3xl {
+                font-size: 1.375rem !important;
+            }
+            
+            .gap-6 {
+                gap: 1rem !important;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .flex-wrap {
+                flex-wrap: wrap !important;
+            }
+            
+            .text-sm {
+                font-size: 0.875rem !important;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-only {
+                display: none !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .desktop-only {
+                display: none !important;
+            }
+        }
+        
+        /* Ensure content is scrollable */
+        .scrollable-content {
+            min-height: 100vh;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Fix for mobile viewport */
+        .mobile-viewport-fix {
+            min-height: 100vh;
+            width: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-    <!-- Floating Background Elements -->
-    <div class="floating-elements top-10 left-10 w-32 h-32 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-full blur-3xl"></div>
-    <div class="floating-elements bottom-10 right-10 w-40 h-40 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-full blur-3xl" style="animation-delay: -2s;"></div>
-    <div class="floating-elements top-1/3 right-1/4 w-8 h-8 bg-gradient-to-r from-emerald-400/30 to-green-400/30 rounded-full float" style="animation-delay: -1s;"></div>
-    <div class="floating-elements bottom-1/4 left-1/4 w-6 h-6 bg-gradient-to-r from-blue-400/30 to-indigo-400/30 rounded-full float" style="animation-delay: -3s;"></div>
+<body class="mobile-viewport-fix">
+    <!-- Floating Background Elements - Desktop only -->
+    <div class="floating-elements top-10 left-10 w-32 h-32 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-full blur-3xl desktop-only"></div>
+    <div class="floating-elements bottom-10 right-10 w-40 h-40 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-full blur-3xl desktop-only" style="animation-delay: -2s;"></div>
+    
+    <!-- Mobile header -->
+    <div class="glass-card rounded-b-3xl mb-6 mobile-only">
+        <div class="p-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="gradient-bg p-2 rounded-xl">
+                        <i class="fas fa-qrcode text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold gradient-text">QR Code</h1>
+                        <p class="text-xs text-gray-400"><%= shortId %></p>
+                    </div>
+                </div>
+                <a href="/dashboard" class="p-2 bg-gray-800 rounded-lg">
+                    <i class="fas fa-arrow-left text-gray-400"></i>
+                </a>
+            </div>
+        </div>
+    </div>
 
-    <div class="max-w-4xl w-full z-10">
-        <div class="glass-card rounded-3xl overflow-hidden fade-in">
-            <!-- Header Section -->
-            <div class="p-8 pb-6 bg-gradient-to-r from-gray-900/50 to-gray-800/50 border-b border-gray-800/50">
-                <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-                    <div class="flex items-center gap-4">
-                        <div class="gradient-bg p-4 rounded-2xl shadow-xl float">
-                            <i class="fas fa-qrcode text-2xl text-white"></i>
+    <div class="scrollable-content p-4 pb-20 max-w-4xl mx-auto w-full">
+        <!-- Desktop Header -->
+        <div class="glass-card rounded-3xl overflow-hidden mb-8 desktop-only fade-in">
+            <div class="p-6 lg:p-8 pb-4 lg:pb-6 bg-gradient-to-r from-gray-900/50 to-gray-800/50 border-b border-gray-800/50">
+                <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 lg:gap-6">
+                    <div class="flex items-center gap-3 lg:gap-4">
+                        <div class="gradient-bg p-3 lg:p-4 rounded-2xl shadow-xl float">
+                            <i class="fas fa-qrcode text-xl lg:text-2xl text-white"></i>
                         </div>
                         <div>
-                            <h1 class="text-3xl font-bold gradient-text">QR Code Generator</h1>
-                            <p class="text-gray-400 flex items-center gap-2 mt-1">
+                            <h1 class="text-2xl lg:text-3xl font-bold gradient-text">QR Code Generator</h1>
+                            <p class="text-gray-400 flex items-center gap-2 mt-1 text-sm lg:text-base">
                                 <i class="fas fa-bolt text-amber-400"></i>
                                 Dynamic QR code for <span class="font-mono text-white"><%= shortId %></span>
                             </p>
                         </div>
                     </div>
                     
-                    <div class="flex flex-wrap gap-3">
+                    <div class="flex flex-wrap gap-2 lg:gap-3 mt-4 lg:mt-0">
                         <a href="<%= shortUrl %>" target="_blank"
-                           class="px-5 py-3 glass rounded-xl hover:bg-white/10 transition flex items-center gap-2">
+                           class="px-4 py-2 lg:px-5 lg:py-3 glass rounded-xl hover:bg-white/10 transition flex items-center gap-2 text-sm lg:text-base">
                             <i class="fas fa-external-link-alt"></i>
-                            <span>Visit Link</span>
+                            <span class="hidden lg:inline">Visit Link</span>
+                            <span class="lg:hidden">Visit</span>
                         </a>
                         <a href="/dashboard"
-                           class="px-5 py-3 btn-primary text-white rounded-xl flex items-center gap-2">
+                           class="px-4 py-2 lg:px-5 lg:py-3 btn-primary text-white rounded-xl flex items-center gap-2 text-sm lg:text-base">
                             <i class="fas fa-tachometer-alt"></i>
                             <span>Dashboard</span>
                         </a>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="p-8">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- QR Code Display Section -->
-                    <div class="space-y-6 fade-in" style="animation-delay: 0.1s;">
+        <!-- Main Content -->
+        <div class="space-y-6 lg:space-y-8">
+            <!-- QR Code Display Section -->
+            <div class="glass-card rounded-3xl p-4 lg:p-6 fade-in">
+                <div class="text-center mb-4 lg:mb-6">
+                    <h2 class="text-xl lg:text-2xl font-bold gradient-text mb-2">Your QR Code</h2>
+                    <p class="text-gray-400 text-sm lg:text-base">Scan to visit <span class="font-mono text-white"><%= shortId %></span></p>
+                </div>
+                
+                <div class="relative mb-6 lg:mb-8">
+                    <div class="qr-container mx-auto">
                         <div class="relative">
-                            <div class="qr-container mx-auto max-w-sm">
-                                <div class="relative">
-                                    <img src="<%= qrCode %>" alt="QR Code for <%= shortId %>" 
-                                         class="w-full h-auto rounded-lg shadow-2xl">
-                                    
-                                    <!-- Scan Animation Overlay -->
-                                    <div class="absolute inset-0 overflow-hidden rounded-lg">
-                                        <div class="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-emerald-400 to-transparent scan-line"></div>
-                                    </div>
-                                    
-                                    <!-- Center Logo Overlay -->
-                                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                                        <div class="w-16 h-16 gradient-bg rounded-xl flex items-center justify-center">
-                                            <i class="fas fa-link text-white text-xl"></i>
-                                        </div>
-                                    </div>
-                                </div>
+                            <img src="<%= qrCode %>" alt="QR Code for <%= shortId %>" 
+                                 class="w-full h-auto rounded-lg shadow-2xl">
+                            
+                            <!-- Scan Animation Overlay -->
+                            <div class="absolute inset-0 overflow-hidden rounded-lg">
+                                <div class="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-emerald-400 to-transparent scan-line"></div>
                             </div>
                             
-                            <!-- QR Status Badges -->
-                            <div class="flex flex-wrap justify-center gap-3 mt-6">
-                                <div class="px-4 py-2 bg-gradient-to-r from-emerald-500/20 to-green-500/20 border border-emerald-500/30 rounded-xl flex items-center gap-2">
-                                    <div class="w-2 h-2 bg-emerald-400 rounded-full pulse"></div>
-                                    <span class="text-sm">Live QR Code</span>
+                            <!-- Center Logo Overlay -->
+                            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                <div class="w-12 h-12 lg:w-16 lg:h-16 gradient-bg rounded-lg lg:rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-link text-white text-lg lg:text-xl"></i>
                                 </div>
-                                <div class="px-4 py-2 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-xl flex items-center gap-2">
-                                    <i class="fas fa-sync-alt text-blue-400"></i>
-                                    <span class="text-sm">Dynamic Updates</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Download Options -->
-                        <div class="glass rounded-2xl p-6">
-                            <h3 class="font-bold text-gray-300 mb-4 flex items-center gap-2">
-                                <i class="fas fa-download text-emerald-400"></i>
-                                Download QR Code
-                            </h3>
-                            <div class="grid grid-cols-2 gap-3">
-                                <button onclick="downloadQR('png')"
-                                        class="download-btn py-3 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 transition flex items-center justify-center gap-2">
-                                    <i class="fas fa-file-image text-blue-400"></i>
-                                    <span>PNG Image</span>
-                                </button>
-                                <button onclick="downloadQR('svg')"
-                                        class="download-btn py-3 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 transition flex items-center justify-center gap-2">
-                                    <i class="fas fa-file-code text-purple-400"></i>
-                                    <span>SVG Vector</span>
-                                </button>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Information & Actions Section -->
-                    <div class="space-y-6 fade-in" style="animation-delay: 0.2s;">
-                        <!-- URL Display -->
-                        <div class="glass rounded-2xl p-6">
-                            <h3 class="font-bold text-gray-300 mb-4 flex items-center gap-2">
-                                <i class="fas fa-link text-purple-400"></i>
-                                Short URL Details
-                            </h3>
-                            
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm text-gray-400 mb-2">Short URL</label>
-                                    <div class="flex group">
-                                        <input type="text" value="<%= shortUrl %>" readonly
-                                               class="flex-1 px-5 py-4 glass-input rounded-l-xl font-mono text-lg truncate">
-                                        <button onclick="copyShortUrl('<%= shortUrl %>')"
-                                                class="px-6 py-4 gradient-bg text-white rounded-r-xl hover-glow transition flex items-center gap-2">
-                                            <i class="fas fa-copy" id="copyIcon"></i>
-                                            <span id="copyText">Copy</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="p-4 gradient-border rounded-xl text-center">
-                                        <div class="text-2xl font-bold text-white mb-1"><%= clicks %></div>
-                                        <div class="text-sm text-gray-400">Total Clicks</div>
-                                    </div>
-                                    <div class="p-4 gradient-border rounded-xl text-center">
-                                        <div class="text-xl font-bold text-white mb-1 font-mono"><%= shortId %></div>
-                                        <div class="text-sm text-gray-400">Short ID</div>
-                                    </div>
-                                </div>
-                            </div>
+                    
+                    <!-- QR Status Badges -->
+                    <div class="flex flex-wrap justify-center gap-2 lg:gap-3 mt-4 lg:mt-6">
+                        <div class="px-3 py-1.5 lg:px-4 lg:py-2 bg-gradient-to-r from-emerald-500/20 to-green-500/20 border border-emerald-500/30 rounded-xl flex items-center gap-2 text-xs lg:text-sm">
+                            <div class="w-1.5 h-1.5 lg:w-2 lg:h-2 bg-emerald-400 rounded-full pulse"></div>
+                            <span>Live QR Code</span>
                         </div>
-
-                        <!-- QR Customization -->
-                        <div class="glass rounded-2xl p-6">
-                            <h3 class="font-bold text-gray-300 mb-4 flex items-center gap-2">
-                                <i class="fas fa-palette text-amber-400"></i>
-                                Customize QR Code
-                            </h3>
-                            
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm text-gray-400 mb-2">Color Theme</label>
-                                    <div class="flex gap-2">
-                                        <button class="w-10 h-10 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-lg border-2 border-white"></button>
-                                        <button class="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg border-2 border-gray-800"></button>
-                                        <button class="w-10 h-10 bg-gradient-to-r from-emerald-500 to-green-500 rounded-lg border-2 border-gray-800"></button>
-                                        <button class="w-10 h-10 bg-gradient-to-r from-amber-500 to-orange-500 rounded-lg border-2 border-gray-800"></button>
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm text-gray-400 mb-2">QR Size</label>
-                                    <div class="flex items-center gap-3">
-                                        <span class="text-sm">Small</span>
-                                        <div class="flex-1 h-2 bg-gray-800 rounded-full">
-                                            <div class="w-2/3 h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full"></div>
-                                        </div>
-                                        <span class="text-sm">Large</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Quick Actions -->
-                        <div class="glass rounded-2xl p-6">
-                            <h3 class="font-bold text-gray-300 mb-4 flex items-center gap-2">
-                                <i class="fas fa-bolt text-blue-400"></i>
-                                Quick Actions
-                            </h3>
-                            
-                            <div class="grid grid-cols-2 gap-3">
-                                <a href="/<%= shortId %>/stats"
-                                   class="p-4 bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl hover:from-gray-700 hover:to-gray-800 transition flex flex-col items-center justify-center gap-2">
-                                    <i class="fas fa-chart-line text-2xl text-emerald-400"></i>
-                                    <span class="text-sm">View Analytics</span>
-                                </a>
-                                <a href="/"
-                                   class="p-4 bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl hover:from-gray-700 hover:to-gray-800 transition flex flex-col items-center justify-center gap-2">
-                                    <i class="fas fa-plus-circle text-2xl text-purple-400"></i>
-                                    <span class="text-sm">Create New</span>
-                                </a>
-                            </div>
+                        <div class="px-3 py-1.5 lg:px-4 lg:py-2 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-xl flex items-center gap-2 text-xs lg:text-sm">
+                            <i class="fas fa-sync-alt text-blue-400 text-xs lg:text-sm"></i>
+                            <span>Dynamic</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Usage Instructions -->
-                <div class="glass rounded-2xl p-6 mt-8 fade-in" style="animation-delay: 0.3s;">
-                    <h3 class="font-bold text-gray-300 mb-4 flex items-center gap-2">
-                        <i class="fas fa-lightbulb text-yellow-400"></i>
-                        How to Use This QR Code
+                <!-- URL Display -->
+                <div class="glass rounded-2xl p-4 lg:p-6 mb-4 lg:mb-6">
+                    <h3 class="font-bold text-gray-300 mb-3 lg:mb-4 flex items-center gap-2 text-sm lg:text-base">
+                        <i class="fas fa-link text-purple-400"></i>
+                        Short URL
                     </h3>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-r from-gray-800/50 to-gray-900/50">
-                            <div class="p-2 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-lg">
-                                <i class="fas fa-mobile-alt text-blue-400"></i>
+                    <div class="space-y-3 lg:space-y-4">
+                        <div class="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-0 group">
+                            <div class="flex-1 px-3 py-2 lg:px-5 lg:py-4 glass-input rounded-xl lg:rounded-l-xl font-mono text-sm lg:text-lg truncate">
+                                <%= shortUrl %>
                             </div>
-                            <div>
-                                <h4 class="font-semibold mb-1">Print & Display</h4>
-                                <p class="text-sm text-gray-400">Print on marketing materials, posters, or business cards</p>
-                            </div>
+                            <button onclick="copyShortUrl('<%= shortUrl %>')"
+                                    class="px-4 py-3 lg:px-6 lg:py-4 gradient-bg text-white rounded-xl lg:rounded-r-xl hover-glow transition flex items-center justify-center gap-2 text-sm lg:text-base">
+                                <i class="fas fa-copy" id="copyIcon"></i>
+                                <span id="copyText">Copy URL</span>
+                            </button>
                         </div>
-                        <div class="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-r from-gray-800/50 to-gray-900/50">
-                            <div class="p-2 bg-gradient-to-br from-purple-500/20 to-indigo-500/20 rounded-lg">
-                                <i class="fas fa-desktop text-purple-400"></i>
+                        
+                        <div class="grid grid-cols-2 gap-3 lg:gap-4">
+                            <div class="p-3 lg:p-4 gradient-border rounded-xl text-center">
+                                <div class="text-xl lg:text-2xl font-bold text-white mb-1"><%= clicks %></div>
+                                <div class="text-xs lg:text-sm text-gray-400">Total Clicks</div>
                             </div>
-                            <div>
-                                <h4 class="font-semibold mb-1">Digital Use</h4>
-                                <p class="text-sm text-gray-400">Add to websites, presentations, or digital documents</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-r from-gray-800/50 to-gray-900/50">
-                            <div class="p-2 bg-gradient-to-br from-emerald-500/20 to-green-500/20 rounded-lg">
-                                <i class="fas fa-share-alt text-emerald-400"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold mb-1">Share Online</h4>
-                                <p class="text-sm text-gray-400">Share via social media, email, or messaging apps</p>
+                            <div class="p-3 lg:p-4 gradient-border rounded-xl text-center">
+                                <div class="text-lg lg:text-xl font-bold text-white mb-1 font-mono"><%= shortId %></div>
+                                <div class="text-xs lg:text-sm text-gray-400">Short ID</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Footer Actions -->
-                <div class="mt-8 pt-6 border-t border-gray-800/50 text-center">
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="/" class="px-6 py-3 glass rounded-xl hover:bg-white/10 transition flex items-center justify-center gap-2">
-                            <i class="fas fa-plus"></i>
-                            <span>Create Another Short URL</span>
+                <!-- Download Options -->
+                <div class="glass rounded-2xl p-4 lg:p-6 mb-4 lg:mb-6">
+                    <h3 class="font-bold text-gray-300 mb-3 lg:mb-4 flex items-center gap-2 text-sm lg:text-base">
+                        <i class="fas fa-download text-emerald-400"></i>
+                        Download Options
+                    </h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                        <button onclick="downloadQR('png')"
+                                class="download-btn py-3 lg:py-4 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 transition flex items-center justify-center gap-2 text-sm lg:text-base">
+                            <i class="fas fa-file-image text-blue-400"></i>
+                            <span>Download PNG Image</span>
+                        </button>
+                        <button onclick="downloadQR('svg')"
+                                class="download-btn py-3 lg:py-4 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 transition flex items-center justify-center gap-2 text-sm lg:text-base">
+                            <i class="fas fa-file-code text-purple-400"></i>
+                            <span>Download SVG Vector</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="glass rounded-2xl p-4 lg:p-6">
+                    <h3 class="font-bold text-gray-300 mb-3 lg:mb-4 flex items-center gap-2 text-sm lg:text-base">
+                        <i class="fas fa-bolt text-blue-400"></i>
+                        Quick Actions
+                    </h3>
+                    
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                        <a href="<%= shortUrl %>" target="_blank"
+                           class="p-3 bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl hover:from-gray-700 hover:to-gray-800 transition flex flex-col items-center justify-center gap-2 text-center">
+                            <i class="fas fa-external-link-alt text-2xl text-emerald-400"></i>
+                            <span class="text-xs lg:text-sm">Visit Link</span>
                         </a>
-                        <button onclick="printQR()" class="px-6 py-3 bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl hover:from-gray-700 hover:to-gray-800 transition flex items-center justify-center gap-2">
-                            <i class="fas fa-print"></i>
-                            <span>Print QR Code</span>
+                        <a href="/<%= shortId %>/stats"
+                           class="p-3 bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl hover:from-gray-700 hover:to-gray-800 transition flex flex-col items-center justify-center gap-2 text-center">
+                            <i class="fas fa-chart-line text-2xl text-blue-400"></i>
+                            <span class="text-xs lg:text-sm">Analytics</span>
+                        </a>
+                        <a href="/"
+                           class="p-3 bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl hover:from-gray-700 hover:to-gray-800 transition flex flex-col items-center justify-center gap-2 text-center">
+                            <i class="fas fa-plus-circle text-2xl text-purple-400"></i>
+                            <span class="text-xs lg:text-sm">Create New</span>
+                        </a>
+                        <button onclick="printQR()"
+                                class="p-3 bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl hover:from-gray-700 hover:to-gray-800 transition flex flex-col items-center justify-center gap-2 text-center">
+                            <i class="fas fa-print text-2xl text-amber-400"></i>
+                            <span class="text-xs lg:text-sm">Print QR</span>
                         </button>
                     </div>
                 </div>
             </div>
+
+            <!-- Usage Instructions -->
+            <div class="glass-card rounded-3xl p-4 lg:p-6 fade-in">
+                <h3 class="font-bold text-gray-300 mb-4 lg:mb-6 flex items-center gap-2 text-lg lg:text-xl">
+                    <i class="fas fa-lightbulb text-yellow-400"></i>
+                    How to Use This QR Code
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="flex items-start gap-3 p-3 lg:p-4 rounded-xl bg-gradient-to-r from-gray-800/50 to-gray-900/50">
+                        <div class="p-2 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-lg flex-shrink-0">
+                            <i class="fas fa-print text-blue-400"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold mb-1 text-sm lg:text-base">Print & Display</h4>
+                            <p class="text-xs lg:text-sm text-gray-400">Print on marketing materials, posters, or business cards</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 p-3 lg:p-4 rounded-xl bg-gradient-to-r from-gray-800/50 to-gray-900/50">
+                        <div class="p-2 bg-gradient-to-br from-purple-500/20 to-indigo-500/20 rounded-lg flex-shrink-0">
+                            <i class="fas fa-desktop text-purple-400"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold mb-1 text-sm lg:text-base">Digital Use</h4>
+                            <p class="text-xs lg:text-sm text-gray-400">Add to websites, presentations, or digital documents</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 p-3 lg:p-4 rounded-xl bg-gradient-to-r from-gray-800/50 to-gray-900/50">
+                        <div class="p-2 bg-gradient-to-br from-emerald-500/20 to-green-500/20 rounded-lg flex-shrink-0">
+                            <i class="fas fa-share-alt text-emerald-400"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold mb-1 text-sm lg:text-base">Share Online</h4>
+                            <p class="text-xs lg:text-sm text-gray-400">Share via social media, email, or messaging apps</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create New Link CTA -->
+            <div class="glass-card rounded-3xl p-6 text-center">
+                <div class="max-w-md mx-auto">
+                    <i class="fas fa-qrcode text-4xl lg:text-5xl gradient-text mb-4"></i>
+                    <h3 class="text-xl lg:text-2xl font-bold mb-2">Need Another QR Code?</h3>
+                    <p class="text-gray-400 mb-6">Create more shortened links with QR codes</p>
+                    <a href="/" class="inline-block px-8 py-3 gradient-bg text-white rounded-xl shadow-lg hover-glow transition text-lg font-semibold">
+                        <i class="fas fa-plus mr-2"></i>Create New Short URL
+                    </a>
+                </div>
+            </div>
         </div>
-        
-        <!-- Watermark -->
-        <p class="text-center text-gray-600 text-sm mt-6 font-mono">
-            <i class="fas fa-qrcode mr-1"></i> ASUMA QR Generator v2.0
-        </p>
+    </div>
+
+    <!-- Bottom Navigation for Mobile -->
+    <div class="fixed bottom-0 left-0 right-0 glass-card rounded-t-3xl p-4 mobile-only z-50">
+        <div class="grid grid-cols-4 gap-2">
+            <a href="/dashboard" class="p-3 rounded-xl bg-gray-800/50 text-center flex flex-col items-center gap-1">
+                <i class="fas fa-home text-gray-400"></i>
+                <span class="text-xs text-gray-400">Home</span>
+            </a>
+            <a href="<%= shortUrl %>" target="_blank" class="p-3 rounded-xl bg-gray-800/50 text-center flex flex-col items-center gap-1">
+                <i class="fas fa-external-link-alt text-blue-400"></i>
+                <span class="text-xs text-gray-400">Visit</span>
+            </a>
+            <button onclick="downloadQR('png')" class="p-3 rounded-xl bg-gray-800/50 text-center flex flex-col items-center gap-1">
+                <i class="fas fa-download text-emerald-400"></i>
+                <span class="text-xs text-gray-400">Download</span>
+            </button>
+            <a href="/" class="p-3 rounded-xl gradient-bg text-center flex flex-col items-center gap-1">
+                <i class="fas fa-plus text-white"></i>
+                <span class="text-xs text-white">New</span>
+            </a>
+        </div>
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-6 right-6 bg-gradient-to-r from-gray-900 to-gray-800 text-white px-6 py-4 rounded-xl shadow-2xl font-medium flex items-center gap-3 z-50 hidden">
+    <div id="toast" class="fixed bottom-20 lg:bottom-6 right-4 left-4 lg:right-6 lg:left-auto bg-gradient-to-r from-gray-900 to-gray-800 text-white px-4 py-3 lg:px-6 lg:py-4 rounded-xl shadow-2xl font-medium flex items-center gap-3 z-50 hidden max-w-md mx-auto lg:mx-0">
         <i class="fas fa-check-circle text-emerald-400"></i>
-        <span id="toastMessage"></span>
+        <span id="toastMessage" class="flex-1 text-sm lg:text-base"></span>
+        <button onclick="hideToast()" class="text-gray-400 hover:text-white">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
 
     <script>
@@ -477,7 +634,7 @@
                 // Reset after 2 seconds
                 setTimeout(() => {
                     copyIcon.className = 'fas fa-copy';
-                    copyText.textContent = 'Copy';
+                    copyText.textContent = 'Copy URL';
                 }, 2000);
                 
             } catch (err) {
@@ -519,13 +676,45 @@
                 <head>
                     <title>QR Code - <%= shortId %></title>
                     <style>
-                        body { font-family: Arial, sans-serif; padding: 40px; text-align: center; }
-                        .qr-container { margin: 20px auto; max-width: 300px; }
-                        h1 { color: #333; margin-bottom: 10px; }
-                        p { color: #666; margin: 5px 0; }
-                        .info { background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0; }
                         @media print {
+                            body { 
+                                font-family: Arial, sans-serif; 
+                                padding: 20px; 
+                                text-align: center; 
+                                max-width: 800px;
+                                margin: 0 auto;
+                            }
                             .no-print { display: none; }
+                            .qr-container { 
+                                margin: 20px auto; 
+                                max-width: 300px;
+                                padding: 15px;
+                                background: white;
+                                border-radius: 10px;
+                                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                            }
+                            .info { 
+                                background: #f8fafc; 
+                                padding: 15px; 
+                                border-radius: 8px; 
+                                margin: 20px 0; 
+                                text-align: left;
+                            }
+                            h1 { color: #333; margin-bottom: 10px; font-size: 24px; }
+                            p { color: #666; margin: 8px 0; font-size: 14px; }
+                            strong { color: #333; }
+                        }
+                        @media screen {
+                            body { padding: 40px; }
+                            button { 
+                                padding: 10px 20px; 
+                                background: #4f46e5; 
+                                color: white; 
+                                border: none; 
+                                border-radius: 5px; 
+                                cursor: pointer;
+                                margin: 20px;
+                            }
                         }
                     </style>
                 </head>
@@ -536,15 +725,18 @@
                         <p><strong>Short ID:</strong> <%= shortId %></p>
                         <p><strong>Total Clicks:</strong> <%= clicks %></p>
                         <p><strong>Generated:</strong> ${new Date().toLocaleDateString()}</p>
+                        <p><strong>Instructions:</strong> Scan this QR code with any smartphone camera</p>
                     </div>
                     <div class="qr-container">
                         <img src="<%= qrCode %>" alt="QR Code" style="width: 100%;">
                     </div>
                     <p class="no-print"><br>This QR code will automatically redirect to: <%= shortUrl %></p>
+                    <button onclick="window.print()" class="no-print">Print QR Code</button>
+                    <button onclick="window.close()" class="no-print">Close Window</button>
                     <script>
                         window.onload = function() {
-                            window.print();
-                            setTimeout(() => window.close(), 500);
+                            // Auto-print on load
+                            setTimeout(() => window.print(), 500);
                         };
                     <\/script>
                 </body>
@@ -566,6 +758,9 @@
             if (type === 'error') {
                 icon.className = 'fas fa-exclamation-circle text-red-400';
                 toast.style.background = 'linear-gradient(to right, #7f1d1d, #991b1b)';
+            } else if (type === 'warning') {
+                icon.className = 'fas fa-exclamation-triangle text-yellow-400';
+                toast.style.background = 'linear-gradient(to right, #854d0e, #a16207)';
             } else {
                 icon.className = 'fas fa-check-circle text-emerald-400';
                 toast.style.background = 'linear-gradient(to right, #0f172a, #1e293b)';
@@ -573,66 +768,101 @@
             
             // Show toast
             toast.style.display = 'flex';
-            toast.style.animation = 'fadeIn 0.3s ease-out';
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(20px)';
             
-            // Hide after 3 seconds
+            // Animate in
             setTimeout(() => {
-                toast.style.animation = 'fadeOut 0.3s ease-out';
-                setTimeout(() => {
-                    toast.style.display = 'none';
-                }, 300);
-            }, 3000);
+                toast.style.opacity = '1';
+                toast.style.transform = 'translateY(0)';
+                toast.style.transition = 'all 0.3s ease-out';
+            }, 10);
+            
+            // Auto-hide after 4 seconds
+            const autoHide = setTimeout(() => {
+                hideToast();
+            }, 4000);
+            
+            // Store timeout ID for clearing if manually closed
+            toast.currentTimeout = autoHide;
+        }
+        
+        function hideToast() {
+            const toast = document.getElementById('toast');
+            
+            // Clear any existing timeout
+            if (toast.currentTimeout) {
+                clearTimeout(toast.currentTimeout);
+            }
+            
+            // Animate out
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(20px)';
+            
+            // Hide after animation
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 300);
         }
         
         // Add CSS for toast animations
         const style = document.createElement('style');
         style.textContent = `
-            @keyframes fadeIn {
+            @keyframes fadeInUp {
                 from { opacity: 0; transform: translateY(20px); }
                 to { opacity: 1; transform: translateY(0); }
             }
-            @keyframes fadeOut {
+            @keyframes fadeOutDown {
                 from { opacity: 1; transform: translateY(0); }
                 to { opacity: 0; transform: translateY(20px); }
+            }
+            
+            /* Mobile touch improvements */
+            @media (max-width: 768px) {
+                button, a {
+                    -webkit-tap-highlight-color: transparent;
+                }
+                
+                .glass-card, .glass {
+                    -webkit-backdrop-filter: blur(12px);
+                    backdrop-filter: blur(12px);
+                }
             }
         `;
         document.head.appendChild(style);
         
-        // Initialize page animations
+        // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
             // Add floating animation to QR container
             const qrContainer = document.querySelector('.qr-container');
-            qrContainer.classList.add('float');
+            if (qrContainer) {
+                qrContainer.classList.add('float');
+            }
             
-            // Add hover effects to all glass cards
-            const glassCards = document.querySelectorAll('.glass');
-            glassCards.forEach(card => {
-                card.addEventListener('mouseenter', () => {
-                    card.style.transform = 'translateY(-2px)';
-                    card.style.boxShadow = '0 15px 40px rgba(0, 0, 0, 0.4)';
+            // Mobile-specific optimizations
+            if (window.innerWidth <= 768) {
+                // Prevent zoom on input focus
+                document.addEventListener('touchstart', function(e) {
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                        document.body.style.zoom = "100%";
+                    }
+                }, { passive: true });
+                
+                // Better touch handling
+                document.querySelectorAll('button, a').forEach(el => {
+                    el.style.cursor = 'pointer';
                 });
-                card.addEventListener('mouseleave', () => {
-                    card.style.transform = 'translateY(0)';
-                    card.style.boxShadow = '';
-                });
-            });
+            }
             
-            // Initialize color theme buttons
-            const colorButtons = document.querySelectorAll('.glass.rounded-2xl.p-6 button.w-10');
-            colorButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    colorButtons.forEach(b => b.style.borderColor = '#1e293b');
-                    this.style.borderColor = '#ffffff';
-                    
-                    // In a real app, you would update the QR code color here
-                    showToast('Color theme updated!');
-                });
-            });
-            
-            // Show welcome toast
+            // Show welcome toast after a short delay
             setTimeout(() => {
-                showToast('QR code generated successfully! Ready to download or share.');
-            }, 1000);
+                showToast('QR code ready! Tap and hold to save image.');
+            }, 800);
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            // Update any responsive elements if needed
         });
     </script>
 </body>
